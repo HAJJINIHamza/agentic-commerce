@@ -84,8 +84,11 @@ product_score = 0.25*demand_growth
 ```
 
 1. demand_growth formula:
-
-`demand_growth = 0.5*OrderGrowth + 0.3*SearchTrendGrowth + 0.2*ReviewGrowth`
+```
+demand_growth = 0.5*OrderGrowth 
+                + 0.3*SearchTrendGrowth 
+                + 0.2*ReviewGrowth
+```
 
 **where** `OrderGrowth = OrderGrowth_of_one_month = (OrderThisMonth - OrderLastMonth)/OrderLastMonth * 100`
 
@@ -96,3 +99,92 @@ product_score = 0.25*demand_growth
 **Other formulas to consider** `OrderGrowth = 0.5*ShortTermGrowth(30d) + 0.3*MidTermGrowth(90d) + 0.2LongTermGrowth(1y)`
 
 **Note :** Get Order and Reviews from AliExpress, and Search from **Google Trend** particulary the trend score. 
+
+2. Low_competition formula :
+```
+LowCompetitionScore =
+    0.5 * SellerDensityScore +
+    0.3 * ReviewSaturationScore +
+    0.2 * PriceWarScore
+```
+
+| Component             | Meaning                                                       | Formula               | Possible Source | 
+| --- |--- |---|---|
+| SellerDensityScore    | Number of sellers offering similar products                   | SellerDensityScore = 1 / log(NumberOfCompetitors + 1)                       | [Shopee](https://shopee.com?utm_source=chatgpt.com) / [Coupang](https://www.coupang.com?utm_source=chatgpt.com)              |
+| ReviewSaturationScore | Whether top competitors already have massive review counts    | ReviewSaturationScore = 1 / log(AvgTop5CompetitorReviews + 1)                      | [AliExpress](https://www.aliexpress.com?utm_source=chatgpt.com)                                                              |
+| PriceWarScore         | How compressed margins are due to intense pricing competition |PriceWarScore = AvgMargin / AvgSellingPrice                        | Marketplace pricing data              |
+
+3. expected_margin formula:
+```
+ExpectedMargin =(SellingPrice
+                - ProductCost
+                - ShippingCost
+                - PlatformFees
+                - AdvertisingCost)
+                / SellingPrice
+```
+
+**Note:** For later iterations add Payment fees and packaging costs, for now they are not a major contributors. 
+
+4. logistics_simplicity formula:
+```
+LogisticsSimplicityScore = 0.4 * DeliveryTimeScore +
+                            0.3 * ShippingCostScore +
+                            0.2 * SizeWeightScore +
+                            0.1 * FragilityScore
+```
+
+|Componenet|formula|
+| --- | --- |
+|DeliveryTimeScore|1/DeliveryTime|
+|ShippingCostScore|1/ShippingCost|
+|WeightScore|1/(weight)|
+|FragilityScore|1/Fragility|
+
+5. supplier_reliability formula : 
+```
+SupplierReliabilityScore = 0.3 * SupplierRatingScore +
+                            0.3 * MoqScore +
+                            0.2 * ResponseRateScore +
+                            0.2 * OrderVolumeScore
+```
+
+|Component|Formula|explination
+| --- | --- | --- |
+|SupplierRatingScore | rating/5| rating of supplier |
+|MoqScore |1/log(MOQ + 1)| can we test with minimum quantity |
+|ResponseRateScore|ResponseRate/100| Supplier should answer fast |
+|OrderVolumeScore| log(TotalOrders + 1)/ log(MaxOrders)| Nmbr of completed orders |
+
+**Note :** Supplier informations are better to get from AliBaba
+
+6. tiktok_virality score: 
+``` 
+TikTokViralityScore =
+    0.6 * TrendGrowthScore +
+    0.4* CreatorAdoptionScore +
+```
+
+|Componenet|Formula|
+|---|---|
+|TrendGrowthScore|(CurrentTrendScore - LastMonthTrendScore)/LastMonthTrendScore |
+|CreatorAdoptionScore|log(NumberOfCreators + 1)|
+
+**Note :** you can add  EngagementScore = log(TotalEngagement + 1) to the formula
+
+**Note :** Get Tiktok data from TikTok Creative Center
+
+7. compliance_safety formula :
+
+``` 
+compliance_safety_score = 1 - risk_level 
+```
+
+| Product Category      | Compliance Risk | risk_level |
+| --------------------- | --------------- | -----------|
+| Phone accessories     | Low             | 0.1        |
+| Kitchen gadgets       | Low             | 0.1        |
+| Cosmetics             | Medium/High     | 0.5        |
+| Supplements           | High            | 0.9        |
+| Medical devices       | Very high       | 1          |
+| Batteries/electronics | Medium/High     | 0.8        |
