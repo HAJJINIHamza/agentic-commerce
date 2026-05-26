@@ -151,10 +151,10 @@ SupplierReliabilityScore = 0.3 * SupplierRatingScore +
 
 |Component|Formula|explination
 | --- | --- | --- |
-|SupplierRatingScore | rating/5| rating of supplier |
+|SupplierRatingScore | supplier_rating/5| rating of supplier |
 |MoqScore |1/log(MOQ + 1)| can we test with minimum quantity |
 |ResponseRateScore|ResponseRate/100| Supplier should answer fast |
-|OrderVolumeScore| log(TotalOrders + 1)/ log(MaxOrders)| Nmbr of completed orders |
+|OrderVolumeScore| log(CompletedOrders + 1)/ log(MaxOrders)| Nmbr of completed orders |
 
 **Note :** Supplier informations are better to get from AliBaba
 
@@ -188,3 +188,137 @@ compliance_safety_score = 1 - risk_level
 | Supplements           | High            | 0.9        |
 | Medical devices       | Very high       | 1          |
 | Batteries/electronics | Medium/High     | 0.8        |
+
+### Product pricing formula
+- Formula 1 
+```
+Selling Price = Product Cost 
+                + Domestic Shipping 
+                + Packaging 
+                + International Shipping 
+                + Shopee Fees 
+                + Payment Fees 
+                + Advertising Cost  
+                + Target Profit 
+```
+- Formula 2 :
+```
+selling_price = fixed_cost / (1 - total_rate) 
+```
+
+Where
+
+```
+fixed_cost = Product Cost 
+            + Domestic Shipping 
+            + Packaging 
+            + International Shipping 
+            + Plateform Fees 
+            + Payment Fees 
+            + Advertising Cost  
+```
+```
+total_rate = commission_rate 
+            + transaction_fee_rate 
+            + payoneer_fee_rate 
+            + service_fee_rate 
+            + ad_cost_rate 
+            + target_margin_rate 
+```
+
+Where :
+total_rate is the target profit margin, which means the percentage of profit we are willing to make from the selling price.
+Example total rate : 0.3, 0.492
+Example componenets of total rate:
+
+| Component         | Rate |
+| ----------------- | ---- |
+| Shopee commission | 8%   |
+| Transaction fee   | 3%   |
+| Payoneer fee      | 2%   |
+| Service fee       | 2%   |
+| Ads               | 15%  |
+| Target margin     | 20%  |
+
+> in case it is hard to use the total rate formula, here is some estimations that could be used : 
+
+| Category                     | Product Example               | Estimated Target Profit Margin |
+| ---------------------------- | ----------------------------- | ------------------------------ |
+| K-beauty accessories         | Scalp massage brush           | 35% – 50%                      |
+| K-beauty accessories         | Silicone facial cleansing pad | 40% – 60%                      |
+| K-beauty accessories         | Makeup puff                   | 45% – 65%                      |
+| K-beauty accessories         | Cosmetic spatula              | 50% – 70%                      |
+| K-beauty accessories         | Cosmetic organizer            | 30% – 45%                      |
+| K-beauty accessories         | Travel cosmetic bottle        | 35% – 55%                      |
+| Hair & scalp care tools      | Shower scalp brush            | 35% – 50%                      |
+| Hair & scalp care tools      | Hair towel                    | 30% – 45%                      |
+| Hair & scalp care tools      | Compact comb                  | 40% – 60%                      |
+| Hair & scalp care tools      | Brush holder                  | 40% – 55%                      |
+| Korean lifestyle small goods | Desk organizer                | 25% – 40%                      |
+| Korean lifestyle small goods | Cute stationery               | 50% – 80%                      |
+| Korean lifestyle small goods | Travel pouch                  | 35% – 55%                      |
+| Korean lifestyle small goods | Kitchen small tool            | 30% – 50%                      |
+| Korean lifestyle small goods | Storage case                  | 25% – 40%                      |
+
+> In case we want to use the total_rate formula here is where you can find its components : 
+
+| Component            | What It Represents                                                        | Where You Can Get It                                                                                                     |
+| -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Commission rate      | Marketplace commission taken on each sale                                 | [Shopee Seller Education Hub](https://seller.shopee.sg/edu/home?utm_source=chatgpt.com) or marketplace fee documentation |
+| Transaction fee rate | Payment transaction processing fee charged by marketplace/payment gateway | Shopee fee documentation or payment provider docs                                                                        |
+| Payoneer fee rate    | International withdrawal/conversion fee                                   | [Payoneer](https://www.payoneer.com?utm_source=chatgpt.com) pricing pages                                                |
+| Service fee rate     | Miscellaneous marketplace operational/service fees                        | Marketplace seller fee pages                                                                                             |
+| Ad cost rate         | Percentage of revenue spent on ads to acquire customers                   | Initially estimated manually, later computed from your historical ad campaigns                                           |
+| Target margin rate   | Desired net profit percentage                                             | Business decision based on strategy/product category                                                                     |
+
+
+### Product first list
+
+| id | Category                        | Product Example                |
+| ---| ------------------------------- | ------------------------------ |
+| 1  | K-beauty accessories            | Scalp massage brush            |
+| 2  | K-beauty accessories            | Silicone facial cleansing pad  |
+| 3  | K-beauty accessories            | Makeup puff                    |
+| 4  | K-beauty accessories            | Cosmetic spatula               |
+| 5  | K-beauty accessories            | Cosmetic organizer             |
+| 6  | K-beauty accessories            | Travel cosmetic bottle         |
+| 7  | K-beauty accessories            | Ice face roller                |
+| 8  | K-beauty accessories            | Reusable silicone mask cover   |
+| 9  | K-beauty accessories            | Blackhead remover tool kit     |
+| 10 | K-beauty accessories            | Mini skincare fridge organizer |
+| 11 | Hair & scalp care tools         | Shower scalp brush             |
+| 12 | Hair & scalp care tools         | Hair towel                     |
+| 13 | Hair & scalp care tools         | Compact comb                   |
+| 14 | Hair & scalp care tools         | Brush holder                   |
+| 15 | Hair & scalp care tools         | Heatless hair curler           |
+| 16 | Hair & scalp care tools         | Hair section clips             |
+| 17 | Hair & scalp care tools         | Portable detangling brush      |
+| 18 | Hair & scalp care tools         | Scalp oil applicator bottle    |
+| 19 | Korean lifestyle small goods    | Desk organizer                 |
+| 20 | Korean lifestyle small goods    | Cute stationery                |
+| 21 | Korean lifestyle small goods    | Travel pouch                   |
+| 22 | Korean lifestyle small goods    | Kitchen small tool             |
+| 23 | Korean lifestyle small goods    | Storage case                   |
+| 24 | Korean lifestyle small goods    | Cable organizer                |
+| 25 | Korean lifestyle small goods    | Mini trash bin for desk        |
+| 26 | Korean lifestyle small goods    | Reusable shopping bag          |
+| 27 | Korean lifestyle small goods    | Foldable laundry basket        |
+| 28 | Korean lifestyle small goods    | Refrigerator storage box       |
+| 29 | Korean desk & study accessories | Laptop stand                   |
+| 30 | Korean desk & study accessories | Keyboard cleaning gel          |
+| 31 | Korean desk & study accessories | Monitor memo board             |
+| 32 | Korean desk & study accessories | Aesthetic mouse pad            |
+| 33 | Korean desk & study accessories | Tablet stand                   |
+| 34 | Korean travel accessories       | Compression packing cubes      |
+| 35 | Korean travel accessories       | Passport holder                |
+| 36 | Korean travel accessories       | Portable jewelry case          |
+| 37 | Korean travel accessories       | Mini refill perfume bottle     |
+| 38 | Korean travel accessories       | Luggage shoe bag               |
+| 39 | Korean pet accessories          | Pet grooming glove             |
+| 40 | Korean pet accessories          | Portable pet water bottle      |
+| 41 | Korean pet accessories          | Pet food storage container     |
+| 42 | Korean pet accessories          | Silicone pet bath brush        |
+| 43 | Korean pet accessories          | Pet hair remover roller        |
+
+
+> To extend you list visit this web page [100 product list for dropshipping ](https://www.wix.com/blog/dropshipping-products?utm_source=google&utm_medium=cpc&utm_campaign=21355403034^163422834859^search%20-%20dsa&experiment_id=^^726585089655^&gad_source=1&gad_campaignid=21355403034&gbraid=0AAAAADwEfwUDBriSsyvRd-ny_CZ_pKMAe&gclid=CjwKCAjw5s_QBhAdEiwADD_gBpvl6PnOJy_B8RwB2sViNEH380inOu0vgGTli8b7HTG0K-eBRtWiqhoCM9QQAvD_BwE)
