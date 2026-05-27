@@ -75,7 +75,7 @@ We added supplier_name to crate a relation between table products and table supp
 ### Product scoring formula: 
 ```
 product_score = 0.25*demand_growth 
-                + 0.2*low_competition 
+                + 0.2*low_competition_score
                 + 0.2*expected_margin 
                 + 0.1*logistics_simplicity 
                 + 0.1*supplier_reliability 
@@ -90,11 +90,11 @@ demand_growth = 0.5*OrderGrowth
                 + 0.2*ReviewGrowth
 ```
 
-**where** `OrderGrowth = OrderGrowth_of_one_month = (OrderThisMonth - OrderLastMonth)/OrderLastMonth * 100`
+**where** `OrderGrowth = OrderGrowth_of_one_month = (OrderThisMonth - OrderLastMonth)/OrderLastMonth`
 
-**and** `SearchTrendGrowth = SearchTrend_of_one_month = (SearchThisMonth - SearchLastMonth)/SearchLastMonth * 100`
+**and** `SearchTrendGrowth = SearchTrend_of_one_month = (SearchThisMonth - SearchLastMonth)/SearchLastMonth`
 
-**and** `ReviewGrowth = ReviewGrowth_of_one_month = (ReveiwThisMonth - ReviewLastMonth)/OrderLastMonth * 100`
+**and** `ReviewGrowth = ReviewGrowth_of_one_month = (ReveiwThisMonth - ReviewLastMonth)/OrderLastMonth`
 
 **Other formulas to consider** `OrderGrowth = 0.5*ShortTermGrowth(30d) + 0.3*MidTermGrowth(90d) + 0.2LongTermGrowth(1y)`
 
@@ -113,6 +113,8 @@ LowCompetitionScore =
 | SellerDensityScore    | Number of sellers offering similar products                   | SellerDensityScore = 1 / log(NumberOfCompetitors + 1)                       | [Shopee](https://shopee.com?utm_source=chatgpt.com) / [Coupang](https://www.coupang.com?utm_source=chatgpt.com)              |
 | ReviewSaturationScore | Whether top competitors already have massive review counts    | ReviewSaturationScore = 1 / log(AvgTop5CompetitorReviews + 1)                      | [AliExpress](https://www.aliexpress.com?utm_source=chatgpt.com)                                                              |
 | PriceWarScore         | How compressed margins are due to intense pricing competition |PriceWarScore = AvgMargin / AvgSellingPrice                        | Marketplace pricing data              |
+
+> High low_competition_score means that competition is low, means product is good, low low_competition_score means competition is high therefore do not consider this product
 
 3. expected_margin formula:
 ```
@@ -138,8 +140,8 @@ LogisticsSimplicityScore = 0.4 * DeliveryTimeScore +
 | --- | --- |
 |DeliveryTimeScore|1/DeliveryTime|
 |ShippingCostScore|1/ShippingCost|
-|WeightScore|1/(weight)|
-|FragilityScore|1/Fragility|
+|SizeWeightScore|1/log(size*weight+1)|
+|FragilityScore|1/log(Fragility+1)|
 
 5. supplier_reliability formula : 
 ```
@@ -155,6 +157,8 @@ SupplierReliabilityScore = 0.3 * SupplierRatingScore +
 |MoqScore |1/log(MOQ + 1)| can we test with minimum quantity |
 |ResponseRateScore|ResponseRate/100| Supplier should answer fast |
 |OrderVolumeScore| log(CompletedOrders + 1)/ log(MaxOrders)| Nmbr of completed orders |
+
+> MOQ stands for Minimum Order Quantity. It is the smallest number of units a supplier is willing to manufacture or sell in a single order, lower is better. 
 
 **Note :** Supplier informations are better to get from AliBaba
 
