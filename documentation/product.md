@@ -247,6 +247,19 @@ Example componenets of total rate:
 | Ads               | 15%  |
 | Target margin     | 20%  |
 
+> Informations about total rate components 
+
+| Component              | Fixed or variable per product | Estimated Value / Range | Why                                                           |
+| ---------------------- | ------------------------- | ----------------------- | ------------------------------------------------------------- |
+| `transaction_fee_rate` | Mostly fixed              | ~2% – 4%                | Payment processors usually apply similar fees across products |
+| `payoneer_fee_rate`    | Mostly fixed              | ~1% – 3%                | Depends more on country/currency than product                 |
+| `service_fee_rate`     | Mostly fixed              | ~1% – 5%                | SaaS/tools/platform costs are generally global                |
+| `commission_rate`      | Variable                  | ~5% – 20%               | Changes by marketplace and product category                   |
+| `ad_cost_rate`         | Highly variable           | ~5% – 40%               | Depends on competition, CPC, virality, niche saturation       |
+| `target_margin_rate`   | Variable                  | ~10% – 50%              | Strategic choice depending on product and business goals      |
+
+
+
 > in case it is hard to use the total rate formula, here is some estimations that could be used : 
 
 | Category                     | Product Example               | Estimated Target Profit Margin |
