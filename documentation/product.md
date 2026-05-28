@@ -143,6 +143,9 @@ LogisticsSimplicityScore = 0.4 * DeliveryTimeScore +
 |SizeWeightScore|1/log(size*weight+1)|
 |FragilityScore|1/log(Fragility+1)|
 
+> Weight should be in Grams
+> Size should be in Centimeters * Centimeters
+
 5. supplier_reliability formula : 
 ```
 SupplierReliabilityScore = 0.3 * SupplierRatingScore +
