@@ -7,7 +7,6 @@ logger = get_logger(__name__)
 
 #Read products level 3 data 
 products_data = pd.read_csv("data/test_product_iter_1.csv", sep=";")
-print(products_data.head())
 
 #Make sure num columns are in numeric format
 num_columns = [col for col in products_data.columns \
@@ -54,8 +53,20 @@ def score_product(product_id):
                     + 0.1 * supplier_reliability 
                     + 0.1 * tiktok_virality 
                     + 0.05 * compliance_safety)
+    
+    product_score_dict = {
+        "product_id": product_id,
+        "demand_growth": demand_growth,
+        "low_competition_score": low_competition_score,
+        "expected_margin": expected_margin,
+        "logistics_simplicity": logistics_simplicity,
+        "supplier_reliability": supplier_reliability,
+        "tiktok_virality": tiktok_virality,
+        "compliance_safety": compliance_safety,
+        "product_score": product_score,
+    }
 
-    logger.info(f"Computed product score for product_id {product_id}: {product_score}")
+    logger.info(f"product_score_dict : {product_score_dict}")
     return product_score
 
 # Level 1 metrics
