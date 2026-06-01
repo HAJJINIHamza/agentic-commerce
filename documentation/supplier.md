@@ -20,3 +20,47 @@ CREATE TABLE suppliers (
     export_ready BOOLEAN, 
     risk_score FLOAT 
 )
+
+### Score supplier 
+```
+supplier_score(supplier): 
+    initiate score = 0 
+ 
+    # Lower MOQ is better 
+ 
+    if supplier["moq"] <= 100: 
+        score += 25 
+    elif supplier["moq"] <= 300: 
+        score += 15 
+    else: 
+        score += 5 
+ 
+    # Shorter lead time is better 
+    if supplier["lead_time_days"] <= 5: 
+        score += 25 
+    elif supplier["lead_time_days"] <= 10: 
+        score += 15 
+    else: 
+        score += 5 
+ 
+    # Legal and export readiness 
+    if supplier["brand_authorization"]: 
+        score += 20 
+ 
+    if supplier["export_ready"]: 
+        score += 15 
+ 
+    # Communication and quality  
+    score += supplier["response_speed_score"] * 10 
+    score += supplier["quality_score"] * 5 
+ 
+    return round(score, 2) 
+```
+
+> The method used to score supplier in product scoring is:
+```
+SupplierReliabilityScore = 0.3 * SupplierRatingScore +
+                            0.3 * MoqScore +
+                            0.2 * ResponseRateScore +
+                            0.2 * OrderVolumeScore 
+````

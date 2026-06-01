@@ -15,3 +15,13 @@ Other markets :
 - Mexico
 - Argentina 
 - Brazil
+
+
+### ITER 1
+
+| componenet | value |
+| --- | --- |
+|TARGET MARKET | Taiwan |
+|SUPPLIERS ORIGIN | Korea |
+|Target Market Plateform | Shopee | 
+|Suppliers Platefrom | Domeggook, Domeme, Ownerclan |

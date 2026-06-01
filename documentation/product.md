@@ -146,6 +146,16 @@ LogisticsSimplicityScore = 0.4 * DeliveryTimeScore +
 > Weight should be in Grams
 > Size should be in Centimeters * Centimeters
 
+Example of shipping costs : 
+Korea -----------> Taiwan 
+Weight |	Approx Cost
+--- | --- 
+0.5 kg |	$4 – $8
+1 kg |	$7 – $12
+2 kg |	$10 – $18
+5 kg |	$25 – $40
+> Link of [Korea Post](https://www.koreapost.go.kr/) where you can find shipping prices
+
 5. supplier_reliability formula : 
 ```
 SupplierReliabilityScore = 0.3 * SupplierRatingScore +

@@ -12,6 +12,7 @@ Deliverables:
 - Fill product data manually in a CSV file
 - develop scoring script (input : product data -> output : product score)
 - Order products by score
+- Develop product pricing script (input: product data -> output : product price)
 
 3. Days 4–7: Build Product Radar MVP :
 
@@ -40,6 +41,13 @@ Deliverables:
 - Break-even calculator 
 - Margin simulator 
 - Country-specific price comparison 
+
+
+
+
+
+
+
 
 
 10. Develop Data Pipelines
