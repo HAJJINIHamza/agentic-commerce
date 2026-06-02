@@ -7,7 +7,7 @@ product_id = data_test["id"].iloc[0]
 
 
 if __name__ == "__main__":
-    #FOR TESTING RUN FOLLOWING COMMAND
+    # FOR TESTING RUN FOLLOWING COMMAND
     # python -m tests.agents_testing.product_pricing_test
     selling_price = product_pricing_agent.get_product_selling_price(product_id)
     print ("Selling price should be : ", selling_price)

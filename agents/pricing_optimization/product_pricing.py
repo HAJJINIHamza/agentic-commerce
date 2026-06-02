@@ -150,6 +150,9 @@ class ProductSellingPriceAgent:
             "simulated_selling_price": round(simulated_selling_price, 2)
         }
 
+        logger.info(f"Simulation : selling price to achieve margin \
+                    {margin} is {round(simulated_selling_price, 2)}")
+
         return round(simulated_selling_price, 2) 
 
 

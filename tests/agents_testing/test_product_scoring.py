@@ -13,7 +13,7 @@ def test_score_product():
     product_id = data_test["id"].iloc[0]
     print ("Product id is : ", product_id)
 
-    score = ProductScoringAgent(products_data = data_test).score_product(product_id)
+    score, _ = ProductScoringAgent(products_data = data_test).score_product(product_id)
     log.info(f"Score for product_id {product_id}: is {score}")
     return score
 

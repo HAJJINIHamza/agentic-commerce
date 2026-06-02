@@ -66,7 +66,7 @@ class ProductScoringAgent:
         #Reverse dictionary items order 
         self.product_score_dict = dict(reversed(list(self.product_score_dict.items())))
         logger.info(f"product_score_dict : {self.product_score_dict}")
-        return product_score
+        return product_score, self.product_score_dict
 
     # Level 1 metrics
 
@@ -253,6 +253,8 @@ class ProductScoringAgent:
                 return 0
 
         order_growth = (order_this_month - order_last_month) / order_last_month 
+        order_growth = order_growth / (1 + order_growth)
+
         print (f"order_growth is : {order_growth}")
         return order_growth
 
@@ -275,6 +277,7 @@ class ProductScoringAgent:
                 return 0
 
         search_trend_growth = (search_this_month - search_last_month) / search_last_month
+        search_trend_growth = search_trend_growth / (1 + search_trend_growth)
 
         print (f"search_trend_growth is : {search_trend_growth}")
         return search_trend_growth
@@ -296,7 +299,10 @@ class ProductScoringAgent:
             else :
                 logger.info(f"No review growth for product_id {product_id}")
                 return 0
+            
         review_growth = (reviews_this_month - reviews_last_month) / reviews_last_month
+        review_growth = review_growth / (1 + review_growth)
+
         print (f"review_growth is : {review_growth}")
         return review_growth
 
@@ -495,6 +501,7 @@ class ProductScoringAgent:
         trend_growth_score = (current_tiktok_trend_score 
                             - last_month_tiktok_trend_score
                             ) / last_month_tiktok_trend_score
+        trend_growth_score = trend_growth_score / (1 + trend_growth_score)
 
         print (f"trend_growth_score is : {trend_growth_score}")
 
@@ -504,12 +511,18 @@ class ProductScoringAgent:
         """
         Computes the creator adoption score for a product
         """
-        print ("Computing creator adoption score")
         number_of_creators = self.products_data.loc[self.products_data["id"] == product_id, 
                                                 "number_of_creators"].values[0]
-        creator_adoption_score = log(number_of_creators + 1)
+        max_nbr_creators = 1000
+
+        if number_of_creators >= max_nbr_creators:
+            logger.info("Number of creators surpasses the max, creator adoption is 1")
+            creator_adoption_score = 1
+        else:
+            creator_adoption_score = log(number_of_creators + 1) / log(max_nbr_creators + 1)
 
         print (f"number of creators is {number_of_creators}")
+        print (f"creator_adoption_score is : {creator_adoption_score}")
 
         return creator_adoption_score
 
@@ -529,7 +542,7 @@ class ProductScoringAgent:
         print ("Computing risk level")
 
         product_category = self.products_data.loc[self.products_data["id"] == product_id, 
-                                            "product_category"].values[0]
+                                            "product_category"].values[0].strip()
 
         if product_category in ["Phone accessories", "Kitchen gadgets", "Korean lifestyle small goods",
                             "Korean pet accessories", "Korean desk & study accessories",
