@@ -53,6 +53,14 @@ class ProductScoringAgent:
                         + 0.1 * tiktok_virality 
                         + 0.05 * compliance_safety)
         
+        classification, reason = self.score_based_classification(product_score, 
+                                                                    expected_margin, 
+                                                                    supplier_reliability, 
+                                                                    compliance_safety)
+        logger.info(f"Product classification for product_id {product_id} is {classification}, because : {reason}")
+        
+        self.product_score_dict["classification_reason"] = reason
+        self.product_score_dict["classification"] = classification
         self.product_score_dict["demand_growth"] = demand_growth
         self.product_score_dict["low_competition_score"] = low_competition_score
         self.product_score_dict["expected_margin"] = expected_margin
@@ -62,7 +70,6 @@ class ProductScoringAgent:
         self.product_score_dict["compliance_safety"] = compliance_safety
         self.product_score_dict["product_score"] = product_score
         self.product_score_dict["product_id"] = product_id
-
         #Reverse dictionary items order 
         self.product_score_dict = dict(reversed(list(self.product_score_dict.items())))
         logger.info(f"product_score_dict : {self.product_score_dict}")
@@ -568,3 +575,41 @@ class ProductScoringAgent:
         print(f"risk level is : {risk_level}")
 
         return risk_level
+    
+    def score_based_classification(self, 
+                                   product_score, 
+                                   expected_margin, 
+                                   supplier_reliability, 
+                                   compliance_safety):
+        """
+        Classifies the product based on the product score
+        """
+        if expected_margin < 0.1:
+            classification = "Reject"
+            reason = "Product has very low expected margin"
+        
+        elif supplier_reliability < 0.3:
+            classification = "Reject"
+            reason = "Product has low supplier reliability score"
+        
+        elif compliance_safety < 0.3:
+            classification = "Reject"
+            reason = "Product has low compliance and safety score"
+
+        if product_score < 0.4:
+            classification = "Reject"
+            reason = "Product has a low score"
+
+        elif product_score < 0.6:
+            classification = "Investigate"
+            reason = "Product has a medium score, needs further investigation"
+
+        elif product_score < 0.75:
+            classification = "Test"
+            reason = "Product has a good score, ready for testing on small scale"
+
+        else :
+            classification = "Great product"
+            reason = "Product has an excellent score"
+
+        return classification, reason

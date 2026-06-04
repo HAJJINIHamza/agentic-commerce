@@ -34,7 +34,7 @@ class ProductSellingPriceAgent:
         self.product_selling_dict["selling_price"] = round(product_price, 2)
         logger.info(f"Selling price for product_id {product_id} is: {round(product_price, 2)}")
         logger.info(f"Product selling dict : {self.product_selling_dict}")
-        return round(product_price, 2  )
+        return round(product_price, 2  ), self.product_selling_dict
 
     def compute_fixed_cost(self, product_id):
         """

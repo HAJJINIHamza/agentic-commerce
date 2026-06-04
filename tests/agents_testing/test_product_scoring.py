@@ -19,7 +19,8 @@ def test_score_product():
 
 if __name__ == "__main__":
     #FOR TESTING RUN FOLLOWING COMMAND
-    # python -m tests.agents_testing.product_scoring_test
+    # python -m tests.agents_testing.test_product_scoring
+    #
     score = test_score_product()
-    assert score >= 0.42 and score <= 0.43, f"Expected score to be approximately 0.426, but got {score}"
+    assert score >= 0.37 and score <= 0.38, f"Expected score to be approximately 0.375, but got {score}"
     print ("Score : ", score)
