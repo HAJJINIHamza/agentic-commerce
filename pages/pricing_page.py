@@ -13,7 +13,7 @@ from agents.pricing_optimization.product_pricing import ProductSellingPriceAgent
 
 st.title("Shopee products pricing calculator")
 
-st.subheader("Uploed values from file")
+st.subheader("Upload values from file")
 if "upload_file_mode" not in st.session_state:
     st.session_state.upload_file_mode = False
 
