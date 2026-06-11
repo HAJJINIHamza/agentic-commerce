@@ -64,3 +64,14 @@ SupplierReliabilityScore = 0.3 * SupplierRatingScore +
                             0.2 * ResponseRateScore +
                             0.2 * OrderVolumeScore 
 ````
+
+
+### Supplier page 
+Type : Dashboard 
+
+Niche : One product
+
+Input : information of the suppliers of one product 
+
+Output : Supplier scorings and top recommandation
+
