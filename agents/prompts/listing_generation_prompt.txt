@@ -43,7 +43,7 @@ Example output:
     "Good for humid weather and daily hair care routines.", 
     "Easy to clean and easy to store." 
   ], 
-  "safe_claim": "Designed for daily scalp massage and shower care." 
+  "safe_claims": "Designed for daily scalp massage and shower care." 
 }}
 
 

@@ -15,7 +15,7 @@ You need to generate the following elements in json format :
 Output template :
 {{
 "tiktok_hook": str,
-"tiktok_short_video": str
+"tiktok_short_video_script": str
 }}
 
 Unsafe claim examples :
