@@ -447,9 +447,9 @@ class ProductScoringAgent:
         print ("Computing MOQ score")
         moq = self.products_data.loc[self.products_data["id"] == product_id, 
                                     "moq"].values[0]
-        if moq == 0:
-            logger.info(f"MOQ of supplier is 0 for product_id {product_id}, this is rare but perfect")
-            return 1
+        if moq <= 1:
+            logger.info(f"Supplier MOQ is {moq}. This is perfect but rare.")
+            return 1 
 
         moq_score = 1 / log(moq + 1)
         print (f"moq_score is : {moq_score}")
