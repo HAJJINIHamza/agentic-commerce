@@ -1,12 +1,14 @@
 from agents.listing_generation.listing_generator import listingGenerationAgent
 
+target_country = "Taiwan"
+product_name = "Korean Cooling Scalp Brush"
+product_category = "Hair care accessory"
+main_benefit = "Helps daily scalp massage during shower"
+buyer_persona = "young female buyer interested in K-beauty" 
+forbidden_claims = "hair-loss cure, medical treatment, disease cure"
+
+
 def test_listing_generation():
-    target_country = "Taiwan"
-    product_name = "Korean Cooling Scalp Brush"
-    product_category = "Hair care accessory"
-    main_benefit = "Helps daily scalp massage during shower"
-    buyer_persona = "young female buyer interested in K-beauty" 
-    forbidden_claims = "hair-loss cure, medical treatment, disease cure"
 
     listings, tiktok_listings = listingGenerationAgent().generate_listings(target_country,
                                                product_name,
@@ -18,8 +20,10 @@ def test_listing_generation():
     
     return listings, tiktok_listings
 
+
+    
 if __name__ == "__main__":
     listings, tiktok_listings = test_listing_generation()
     print("Listings : ")
     print (listings)
-    print (tiktok_listings)
+    print (tiktok_listings) 
