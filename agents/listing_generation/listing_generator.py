@@ -26,6 +26,7 @@ class listingGenerationAgent:
         - Content
         - Reasoning details
         """
+        logger.info(f"Calling model {model_id}")
         response = requests.post(
                         url = "https://openrouter.ai/api/v1/chat/completions",
                         headers= {
@@ -47,9 +48,9 @@ class listingGenerationAgent:
                         )
         
         json_response = response.json()
-        if "error" in response:
-            logger.info(f"[WARNING] failed to get completion from model, because {response["error"]["message"]}")
-            raise Exception(response["error"]["message"])
+        if "error" in json_response:
+            logger.info(f"[WARNING] failed to get completion from model, because {response}")
+            raise Exception(f"[WARNING] failed to get completion from model, because : {response["error"]["message"]}")
         content = json_response["choices"][0]["message"]["content"]
         reasoning_details = json_response["choices"][0]["message"]["reasoning_details"]
         logger.info("Got completion from model")
@@ -126,9 +127,9 @@ class listingGenerationAgent:
         try:
             tiktok_listings = tiktok_listings.replace("```json", "").replace("```", "").strip()
             tiktok_listings = json.loads(tiktok_listings)  
-        except:
+        except Exception as e:
             logger.info("Failed to get a valid json listing response from model")
-            raise ValueError("Couldn't get a valid json tiktok listings response from model")
+            raise ValueError(f"Couldn't get a valid json tiktok listings response from model, error : {e}")
         
         logger.info("Successfully generated listings")
         logger.info(f"listings : {listings}")
