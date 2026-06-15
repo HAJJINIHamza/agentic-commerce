@@ -75,3 +75,40 @@ Input : information of the suppliers of one product
 
 Output : Supplier scorings and top recommandation
 
+### Supplier origin table:
+- Iter 1
+```
+{
+"supplier_id"	
+"product_id"	
+"supplier_name"	
+"product_name"	
+"supplier_rating"	
+"moq"	
+"supplier_response_rate"	
+"supplier_completed_orders"	
+"supplier_max_orders"
+}
+```
+
+- Iter 1.5
+```
+{ 
+    "supplier_id": "S001", 
+    "company_name": "ABC Beauty Korea", 
+    "contact_person": "Mr. Lee", 
+    "email": "sales@example.com", 
+    "product_name": "Scalp brush hair care"
+    "product_category": "Hair Care", 
+    "unit_cost_krw": 3500, 
+    "moq": 100, 
+    "lead_time_days": 5, 
+    "domestic_shipping_krw": 3000, 
+    "brand_authorization": True, 
+    "export_ready": True, 
+    "response_speed_score": 0.9, 
+    "quality_score": 0.85, 
+    "risk_score": 0.15 
+} 
+```
+
