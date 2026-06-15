@@ -6,7 +6,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+import json
+import pandas as pd
 import streamlit as st 
+from src.utils import save_csv_file
 from agents.listing_generation.listing_generator import listingGenerationAgent
 from agents.listing_generation.listing_evaluator import listingEvaluatorAgent
 
@@ -64,24 +67,43 @@ if st.session_state.manual_mode:
                     st.write(f"- {safe_claim}")
                 st.write(f"**TikTok hook** : {tiktok_listings["tiktok_hook"]}")
                 st.write(f"**TikTok video script** : {tiktok_listings["tiktok_short_video_script"]}")
-
-                with st.empty():
-                    st.info("⏳ Evaluating listings, please wait...")
-                    eval_results = listingEvaluatorAgent().evaluate_listings(product_name,
-                                                                            product_category,
-                                                                            forbidden_claims,
-                                                                            listings["title"],
-                                                                            listings["keywords"],
-                                                                            listings["description"],
-                                                                            listings["safe_claims"],
-                                                                            tiktok_listings["tiktok_hook"],
-                                                                            tiktok_listings["tiktok_short_video_script"])
-                    st.empty()
+                
+                try :
+                    with st.empty():
+                        st.info("⏳ Evaluating listings, please wait...")
+                        eval_results = listingEvaluatorAgent().evaluate_listings(product_name,
+                                                                                product_category,
+                                                                                forbidden_claims,
+                                                                                listings["title"],
+                                                                                listings["keywords"],
+                                                                                listings["description"],
+                                                                                listings["safe_claims"],
+                                                                                tiktok_listings["tiktok_hook"],
+                                                                                tiktok_listings["tiktok_short_video_script"])
+                        st.empty()
+                except Exception as e:
+                    st.error(f"Couldn't use AI judge to evaluate listings. Error : {e}")
 
                 #Evaluate listings
                 if eval_results["accepted"] == True:
                     st.success("Listings are safe to be pusblished")
                 
-                else :
+                elif eval_results["accepted"] == False:
                     st.error("Listings have been rejected by AI juge")
                     st.info(f"Reason : {eval_results["reason"]}")
+
+                listings_dataframe = pd.DataFrame([
+                        {
+                            "title": listings.get("title"),
+                            "listings_keywords": json.dumps(listings.get("keywords")),
+                            "description": json.dumps(listings.get("description")),
+                            "safe_claims": json.dumps(listings.get("safe_claims")),
+                            "tiktok_hook": tiktok_listings.get("tiktok_hook"),
+                            "tiktok_short_video_script": tiktok_listings.get("tiktok_short_video_script"),
+                            "accepted": eval_results.get("accepted"),
+                            "reason": eval_results.get("reason")
+                        }
+                    ])
+                
+                save_csv_file(listings_dataframe, "listings", "data/listings")
+                st.write ("Saved data")

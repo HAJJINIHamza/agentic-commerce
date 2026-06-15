@@ -8,7 +8,6 @@ logger = get_logger(__name__)
 #This data is level 3 product information 
 #Neet to go level 3 -> level 2 then level 2 -> level 1.
 
-#TODO : you should add Try Except to all fuctions
 #TODO : Add DataFrame savings at each level
 #TODO : ADD unit tests
 
@@ -73,6 +72,7 @@ class ProductScoringAgent:
         #Reverse dictionary items order 
         self.product_score_dict = dict(reversed(list(self.product_score_dict.items())))
         logger.info(f"product_score_dict : {self.product_score_dict}")
+
         return product_score, self.product_score_dict
 
     # Level 1 metrics
@@ -613,3 +613,5 @@ class ProductScoringAgent:
             reason = "Product has an excellent score"
 
         return classification, reason
+    
+

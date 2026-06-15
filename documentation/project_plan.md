@@ -61,3 +61,9 @@ Output:
 - Develop data extraction pipeline
 - Process, clean or prepare data
 - Store data on product and supplier Databases. 
+
+### TODOs
+#### TODO 15-06-2026
+- Add save data (excel or csv) at the end of product scoring, supplier scoring, product selling, listing generation
+- Add original data structure (supplier_id, product_id) to product, supplier and listing 
+- Generate some data from Chatgpt and use it for testing, like products and suppliers.

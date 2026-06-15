@@ -49,8 +49,8 @@ class listingGenerationAgent:
         
         json_response = response.json()
         if "error" in json_response:
-            logger.info(f"[WARNING] failed to get completion from model, because {response}")
-            raise Exception(f"[WARNING] failed to get completion from model, because : {response["error"]["message"]}")
+            logger.info(f"[WARNING] failed to get completion from model, because {json_response}")
+            raise Exception(f"[WARNING] failed to get completion from model, because : {json_response["error"]["message"]}")
         content = json_response["choices"][0]["message"]["content"]
         reasoning_details = json_response["choices"][0]["message"]["reasoning_details"]
         logger.info("Got completion from model")

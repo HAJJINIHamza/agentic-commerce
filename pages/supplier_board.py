@@ -6,6 +6,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from src.utils import save_csv_file
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -56,6 +57,7 @@ if uploaded_file:
 
     df = pd.DataFrame(df)
     df.sort_values(by="supplier_score", ascending=False, inplace=True)
+    save_csv_file(df, "supplier_scores", "data/supplier_scorings/")
 
     st.dataframe(df) 
  
