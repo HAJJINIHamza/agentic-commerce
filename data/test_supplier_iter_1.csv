@@ -1,0 +1,7 @@
+supplier_id;product_id;supplier_name;product_name;supplier_rating;moq;supplier_response_rate;supplier_completed_orders;supplier_max_orders
+123;111;k-beauty producer;scalp brush;4;5;70;70;100
+234;222;k-beauty professional;Shower scalp brush;3;10;90;100;500
+345;333;Hairer;Hair towel;2;1;95;90;210
+456;444;Brusher pro;Brush holder;5;50;80;500;900
+567;555;Travel aa;Travel pouch;1;1;99;300;330
+678;666;Suitcase claker;Storage case;3;5;85;150;200
