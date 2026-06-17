@@ -144,7 +144,8 @@ LogisticsSimplicityScore = 0.4 * DeliveryTimeScore +
 |FragilityScore|1/log(Fragility+1)|
 
 > Weight should be in Grams
-> Size should be in Centimeters * Centimeters
+> Size should be in Centimeters * Centimeters * Centimeters
+> If size is categorical : Large <> 10*10*10 = 1000 | medium <> 30*30*30 = 9000| Large <> 60*60*60 = 216000
 
 Example of shipping costs : 
 Korea -----------> Taiwan 
@@ -352,3 +353,7 @@ Example componenets of total rate:
 
 
 > To extend you list visit this web page [100 product list for dropshipping ](https://www.wix.com/blog/dropshipping-products?utm_source=google&utm_medium=cpc&utm_campaign=21355403034^163422834859^search%20-%20dsa&experiment_id=^^726585089655^&gad_source=1&gad_campaignid=21355403034&gbraid=0AAAAADwEfwUDBriSsyvRd-ny_CZ_pKMAe&gclid=CjwKCAjw5s_QBhAdEiwADD_gBpvl6PnOJy_B8RwB2sViNEH380inOu0vgGTli8b7HTG0K-eBRtWiqhoCM9QQAvD_BwE)
+
+### Original data structure
+
+id	product_name	product_category	selling_price	product_cost	shipping_cost	packaging_cost	international_shipping_cost	platform_fees	payment_fees	advertising_cost	orders_this_month	orders_last_month	search_this_month	search_last_month	reviews_this_month	reviews_last_month	number_of_competitors	avg_top_five_competitor_reviews	avg_margin	avg_selling_price	delivery_time	weight	size	fragility	supplier_rating	moq	supplier_response_rate	supplier_completed_orders	supplier_max_orders	current_tiktok_trend_score	last_month_tiktok_trend_score	number_of_creators	commission_rate	transaction_fee_rate	payoneer_fee_rate	service_fee_rate	ad_cost_rate	target_margin_rate
