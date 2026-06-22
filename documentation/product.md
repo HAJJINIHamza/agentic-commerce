@@ -94,7 +94,7 @@ demand_growth = 0.5*OrderGrowth
 
 **and** `SearchTrendGrowth = SearchTrend_of_one_month = (SearchThisMonth - SearchLastMonth)/SearchLastMonth`
 
-**and** `ReviewGrowth = ReviewGrowth_of_one_month = (ReveiwThisMonth - ReviewLastMonth)/OrderLastMonth`
+**and** `ReviewGrowth = ReviewGrowth_of_one_month = (ReveiwThisMonth - ReviewLastMonth)/ReviewLastMonth`
 
 **Other formulas to consider** `OrderGrowth = 0.5*ShortTermGrowth(30d) + 0.3*MidTermGrowth(90d) + 0.2LongTermGrowth(1y)`
 
@@ -295,7 +295,197 @@ Example componenets of total rate:
 
 | Component            | What It Represents                                                        | Where You Can Get It                                                                                                     |
 | -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Commission rate      | Marketplac### Product pricing formula
+- Formula 1 
+```
+Selling Price = Product Cost 
+                + Domestic Shipping 
+                + Packaging 
+                + International Shipping 
+                + Shopee Fees 
+                + Payment Fees 
+                + Advertising Cost  
+                + Target Profit 
+```
+- Formula 2 :
+```
+selling_price = fixed_cost / (1 - total_rate) 
+```
+
+Where
+
+```
+fixed_cost = Product Cost 
+            + Domestic Shipping 
+            + Packaging 
+            + International Shipping 
+            + Plateform Fees 
+            + Payment Fees 
+            + Advertising Cost  
+```
+```
+total_rate = commission_rate 
+            + transaction_fee_rate 
+            + payoneer_fee_rate ### Product pricing formula
+- Formula 1 
+```
+Selling Price = Product Cost 
+                + Domestic Shipping 
+                + Packaging 
+                + International Shipping 
+                + Shopee Fees 
+                + Payment Fees 
+                + Advertising Cost  
+                + Target Profit 
+```
+- Formula 2 :
+```
+selling_price = fixed_cost / (1 - total_rate) 
+```
+
+Where
+
+```
+fixed_cost = Product Cost 
+            + Domestic Shipping 
+            + Packaging 
+            + International Shipping 
+            + Plateform Fees 
+            + Payment Fees 
+            + Advertising Cost  
+```
+```
+total_rate = commission_rate 
+            + transaction_fee_rate 
+            + payoneer_fee_rate 
+            + service_fee_rate 
+            + ad_cost_rate 
+            + target_margin_rate 
+```
+
+Where :
+total_rate is the target profit margin, which means the percentage of profit we are willing to make from the selling price.
+Example total rate : 0.3, 0.492
+Example componenets of total rate:
+
+| Component         | Rate |
+| ----------------- | ---- |
+| Shopee commission | 8%   |
+| Transaction fee   | 3%   |
+| Payoneer fee      | 2%   |
+| Service fee       | 2%   |
+| Ads               | 15%  |
+| Target margin     | 20%  |
+
+> Informations about total rate components 
+
+| Component              | Fixed or variable per product | Estimated Value / Range | Why                                                           |
+| ---------------------- | ------------------------- | ----------------------- | ------------------------------------------------------------- |
+| `transaction_fee_rate` | Mostly fixed              | ~2% – 4%                | Payment processors usually apply similar fees across products |
+| `payoneer_fee_rate`    | Mostly fixed              | ~1% – 3%                | Depends more on country/currency than product                 |
+| `service_fee_rate`     | Mostly fixed              | ~1% – 5%                | SaaS/tools/platform costs are generally global                |
+| `commission_rate`      | Variable                  | ~5% – 20%               | Changes by marketplace and product category                   |
+| `ad_cost_rate`         | Highly variable           | ~5% – 40%               | Depends on competition, CPC, virality, niche saturation       |
+| `target_margin_rate`   | Variable                  | ~10% – 50%              | Strategic choice depending on product and business goals      |
+
+
+
+> in case it is hard to use the total rate formula, here is some estimations that could be used : 
+
+| Category                     | Product Example               | Estimated Target Profit Margin |
+| ---------------------------- | ----------------------------- | ------------------------------ |
+| K-beauty accessories         | Scalp massage brush           | 35% – 50%                      |
+| K-beauty accessories         | Silicone facial cleansing pad | 40% – 60%                      |
+| K-beauty accessories         | Makeup puff                   | 45% – 65%                      |
+| K-beauty accessories         | Cosmetic spatula              | 50% – 70%                      |
+| K-beauty accessories         | Cosmetic organizer            | 30% – 45%                      |
+| K-beauty accessories         | Travel cosmetic bottle        | 35% – 55%                      |
+| Hair & scalp care tools      | Shower scalp brush            | 35% – 50%                      |
+| Hair & scalp care tools      | Hair towel                    | 30% – 45%                      |
+| Hair & scalp care tools      | Compact comb                  | 40% – 60%                      |
+| Hair & scalp care tools      | Brush holder                  | 40% – 55%                      |
+| Korean lifestyle small goods | Desk organizer                | 25% – 40%                      |
+| Korean lifestyle small goods | Cute stationery               | 50% – 80%                      |
+| Korean lifestyle small goods | Travel pouch                  | 35% – 55%                      |
+| Korean lifestyle small goods | Kitchen small tool            | 30% – 50%                      |
+| Korean lifestyle small goods | Storage case                  | 25% – 40%                      |
+
+> In case we want to use the total_rate formula here is where you can find its components : 
+
+| Component            | What It Represents                                                        | Where You Can Get It                                                                                                     |
+| -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Commission rate      | Marketplace commission taken on each sale                                 | [Shopee Seller Education Hub](https://seller.shopee.sg/edu/home?utm_source=chatgpt.com) or marketplace fee documentation |
+| Transaction fee rate | Payment transaction processing fee charged by marketplace/payment gateway | Shopee fee documentation or payment provider docs                                                                        |
+| Payoneer fee rate    | International withdrawal/conversion fee                                   | [Payoneer](https://www.payoneer.com?utm_source=chatgpt.com) pricing pages                                                |
+| Service fee rate     | Miscellaneous marketplace operational/service fees                        | Marketplace seller fee pages                                                                                             |
+| Ad cost rate         | Percentage of revenue spent on ads to acquire customers                   | Initially estimated manually, later computed from your historical ad campaigns                                           |
+| Target margin rate   | Desired net profit percentage                                             | Business decision based on strategy/product category                                                                     |
+
+
+            + service_fee_rate 
+            + ad_cost_rate 
+            + target_margin_rate 
+```
+
+Where :
+total_rate is the target profit margin, which means the percentage of profit we are willing to make from the selling price.
+Example total rate : 0.3, 0.492
+Example componenets of total rate:
+
+| Component         | Rate |
+| ----------------- | ---- |
+| Shopee commission | 8%   |
+| Transaction fee   | 3%   |
+| Payoneer fee      | 2%   |
+| Service fee       | 2%   |
+| Ads               | 15%  |
+| Target margin     | 20%  |
+
+> Informations about total rate components 
+
+| Component              | Fixed or variable per product | Estimated Value / Range | Why                                                           |
+| ---------------------- | ------------------------- | ----------------------- | ------------------------------------------------------------- |
+| `transaction_fee_rate` | Mostly fixed              | ~2% – 4%                | Payment processors usually apply similar fees across products |
+| `payoneer_fee_rate`    | Mostly fixed              | ~1% – 3%                | Depends more on country/currency than product                 |
+| `service_fee_rate`     | Mostly fixed              | ~1% – 5%                | SaaS/tools/platform costs are generally global                |
+| `commission_rate`      | Variable                  | ~5% – 20%               | Changes by marketplace and product category                   |
+| `ad_cost_rate`         | Highly variable           | ~5% – 40%               | Depends on competition, CPC, virality, niche saturation       |
+| `target_margin_rate`   | Variable                  | ~10% – 50%              | Strategic choice depending on product and business goals      |
+
+
+
+> in case it is hard to use the total rate formula, here is some estimations that could be used : 
+
+| Category                     | Product Example               | Estimated Target Profit Margin |
+| ---------------------------- | ----------------------------- | ------------------------------ |
+| K-beauty accessories         | Scalp massage brush           | 35% – 50%                      |
+| K-beauty accessories         | Silicone facial cleansing pad | 40% – 60%                      |
+| K-beauty accessories         | Makeup puff                   | 45% – 65%                      |
+| K-beauty accessories         | Cosmetic spatula              | 50% – 70%                      |
+| K-beauty accessories         | Cosmetic organizer            | 30% – 45%                      |
+| K-beauty accessories         | Travel cosmetic bottle        | 35% – 55%                      |
+| Hair & scalp care tools      | Shower scalp brush            | 35% – 50%                      |
+| Hair & scalp care tools      | Hair towel                    | 30% – 45%                      |
+| Hair & scalp care tools      | Compact comb                  | 40% – 60%                      |
+| Hair & scalp care tools      | Brush holder                  | 40% – 55%                      |
+| Korean lifestyle small goods | Desk organizer                | 25% – 40%                      |
+| Korean lifestyle small goods | Cute stationery               | 50% – 80%                      |
+| Korean lifestyle small goods | Travel pouch                  | 35% – 55%                      |
+| Korean lifestyle small goods | Kitchen small tool            | 30% – 50%                      |
+| Korean lifestyle small goods | Storage case                  | 25% – 40%                      |
+
+> In case we want to use the total_rate formula here is where you can find its components : 
+
+| Component            | What It Represents                                                        | Where You Can Get It                                                                                                     |
+| -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Commission rate      | Marketplace commission taken on each sale                                 | [Shopee Seller Education Hub](https://seller.shopee.sg/edu/home?utm_source=chatgpt.com) or marketplace fee documentation |
+| Transaction fee rate | Payment transaction processing fee charged by marketplace/payment gateway | Shopee fee documentation or payment provider docs                                                                        |
+| Payoneer fee rate    | International withdrawal/conversion fee                                   | [Payoneer](https://www.payoneer.com?utm_source=chatgpt.com) pricing pages                                                |
+| Service fee rate     | Miscellaneous marketplace operational/service fees                        | Marketplace seller fee pages                                                                                             |
+| Ad cost rate         | Percentage of revenue spent on ads to acquire customers                   | Initially estimated manually, later computed from your historical ad campaigns                                           |
+| Target margin rate   | Desired net profit percentage                                             | Business decision based on strategy/product category                                                                     |
+
+e commission taken on each sale                                 | [Shopee Seller Education Hub](https://seller.shopee.sg/edu/home?utm_source=chatgpt.com) or marketplace fee documentation |
 | Transaction fee rate | Payment transaction processing fee charged by marketplace/payment gateway | Shopee fee documentation or payment provider docs                                                                        |
 | Payoneer fee rate    | International withdrawal/conversion fee                                   | [Payoneer](https://www.payoneer.com?utm_source=chatgpt.com) pricing pages                                                |
 | Service fee rate     | Miscellaneous marketplace operational/service fees                        | Marketplace seller fee pages                                                                                             |
@@ -357,3 +547,53 @@ Example componenets of total rate:
 ### Original data structure
 
 id	product_name	product_category	selling_price	product_cost	shipping_cost	packaging_cost	international_shipping_cost	platform_fees	payment_fees	advertising_cost	orders_this_month	orders_last_month	search_this_month	search_last_month	reviews_this_month	reviews_last_month	number_of_competitors	avg_top_five_competitor_reviews	avg_margin	avg_selling_price	delivery_time	weight	size	fragility	supplier_rating	moq	supplier_response_rate	supplier_completed_orders	supplier_max_orders	current_tiktok_trend_score	last_month_tiktok_trend_score	number_of_creators	commission_rate	transaction_fee_rate	payoneer_fee_rate	service_fee_rate	ad_cost_rate	target_margin_rate
+
+
+### How to collect data : Iter 1
+**Legend**
+| Status             | Meaning                                                                       |
+| ------------------ | ----------------------------------------------------------------------------- |
+| 🟢 Manual          | Can be collected manually from Shopee, AliExpress, Coupang, supplier websites |
+| 🟡 API             | Possible via API/scraping/provider                                            |
+| 🔵 Derived         | Should be computed by your system                                             |
+| 🔴 Hard/Impossible | Not reliably available; use proxy metrics                                     |
+
+**Collection**
+| Feature                         | Manual? | API? | Derived? | Notes                                     |
+| ------------------------------- | ------- | ---- | -------- | ----------------------------------------- |
+| selling_price                   | 🟢      | 🟢   |          | Seller decides final price                |
+| product_cost                    | 🟢      | 🟢   |          | Supplier quotation                        |
+| shipping_cost                   | 🟢      | 🟢   |          | Platform shipping calculator              |
+| packaging_cost                  | 🟢      |      |          | Internal business cost                    |
+| international_shipping_cost     | 🟢      | 🟢   |          | Freight forwarder APIs                    |
+| platform_fees                   | 🟢      |      |          | Platform documentation                    |
+| payment_fees                    | 🟢      |      |          | Payment provider fee schedule             |
+| advertising_cost                |         |      | 🔵       | Estimate from campaigns                   |
+| orders_this_month               |         | 🟡   |          | Marketplace analytics providers           |
+| orders_last_month               |         | 🟡   |          | Same as above                             |
+| search_this_month               |         | 🟡   |          | Google Trends / marketplace keyword tools |
+| search_last_month               |         | 🟡   |          | Historical trend source                   |
+| reviews_this_month              |         | 🟡   |          | Requires tracking snapshots               |
+| reviews_last_month              |         | 🟡   |          | Requires tracking snapshots               |
+| number_of_competitors           | 🟢      | 🟢   |          | Search results count                      |
+| avg_top_five_competitor_reviews | 🟢      | 🟢   |          | Easy to collect                           |
+| avg_margin                      |         |      | 🔵       | Formula                                   |
+| avg_selling_price               | 🟢      | 🟢   | 🔵       | Aggregate from competitors                |
+| delivery_time                   | 🟢      | 🟢   |          | Product listing                           |
+| weight                          | 🟢      | 🟢   |          | Product specs                             |
+| size                            | 🟢      | 🟢   |          | Product specs                             |
+| supplier_rating                 | 🟢      | 🟢   |          | Supplier profile                          |
+| moq                             | 🟢      | 🟢   |          | Supplier profile                          |
+| supplier_response_rate          | 🟢      | 🟢   |          | Alibaba / AliExpress                      |
+| supplier_completed_orders       | 🟢      | 🟢   |          | Supplier profile                          |
+| supplier_max_orders             |         |      | 🔴       | Usually unavailable                       |
+| current_tiktok_trend_score      |         | 🟡   | 🔵       | Build score from TikTok signals           |
+| last_month_tiktok_trend_score   |         | 🟡   | 🔵       | Historical snapshots                      |
+| number_of_creators              |         | 🟡   |          | TikTok Shop API / scraping                |
+| commission_rate                 | 🟢      |      |          | Platform policy                           |
+| transaction_fee_rate            | 🟢      |      |          | Platform policy                           |
+| payoneer_fee_rate               | 🟢      |      |          | Payoneer documentation                    |
+| service_fee_rate                | 🟢      |      |          | Platform policy                           |
+| ad_cost_rate                    |         |      | 🔵       | Calculated                                |
+| target_margin_rate              |         |      | 🔵       | Business decision                         |
+

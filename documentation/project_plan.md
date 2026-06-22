@@ -43,7 +43,7 @@ Output:
     - Country-specific price comparison 
 
 
-4. Week 3: Build Listing and Content Generator 
+5. Week 3: Build Listing and Content Generator 
     Deliverables: 
     - Shopee title generator 
     - Product description generator 
@@ -63,7 +63,9 @@ Output:
 - Store data on product and supplier Databases. 
 
 ### TODOs
+
 #### TODO 15-06-2026
-- Add save data (excel or csv) at the end of product scoring, supplier scoring, product selling, listing generation
-- Add original data structure (supplier_id, product_id) to product, supplier and listing 
-- Generate some data from Chatgpt and use it for testing, like products and suppliers.
+- Add save data (excel or csv) at the end of product scoring, supplier scoring, product selling, listing generation (Mostly done)
+- Add original data structure (supplier_id, product_id) to product, supplier and listing (In progess)
+- Generate some data from Chatgpt and use it for testing, like products and suppliers. (In progress)
+- An if else condition to verify compliance safety via category isn't the best approach, think about using an LLM for decision
