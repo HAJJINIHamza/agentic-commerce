@@ -29,7 +29,7 @@ if uploaded_file:
             "product_name": [],
             "product_category": [],
             "product_score": [],
-            "demand_growth": [],
+            "demand_strength": [],
             "low_competition_score": [],
             "expected_margin": [],
             "logistics_simplicity": [],
@@ -49,7 +49,7 @@ if uploaded_file:
         df["product_category"].append(product_data.loc[product_data["id"] == product_id, 
                                                        "product_category"].iloc[0].strip())
         df["product_score"].append(product_score)
-        df["demand_growth"].append(score_components["demand_growth"])
+        df["demand_strength"].append(score_components["demand_strength"])
         df["low_competition_score"].append(score_components["low_competition_score"])
         df["expected_margin"].append(score_components["expected_margin"])
         df["logistics_simplicity"].append(score_components["logistics_simplicity"])
@@ -66,7 +66,7 @@ if uploaded_file:
     st.dataframe(df) 
  
     top_product = df.iloc[0] 
-    score_component_names = ["demand_growth", 
+    score_component_names = ["demand_strength", 
                             "low_competition_score", 
                             "expected_margin", 
                             "logistics_simplicity", 

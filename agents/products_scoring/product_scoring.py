@@ -29,8 +29,10 @@ class ProductScoringAgent:
         """
 
         print ("Scoring product")
-        demand_growth = self.compute_demand_growth(product_id)
-        logger.info(f"Demand growth for product_id {product_id} is {demand_growth}")
+        #demand_growth = self.compute_demand_growth(product_id)
+        #logger.info(f"Demand growth for product_id {product_id} is {demand_growth}")
+        demand_strength = self.compute_demand_strength(product_id)
+        logger.info(f"Demand Strength for product_id {product_id} is : {demand_strength}")
         low_competition_score = self.compute_competition_score(product_id)
         logger.info(f"Low competition score for product_id {product_id} is {low_competition_score}")
         expected_margin = self.compute_expected_margin(product_id)
@@ -44,7 +46,7 @@ class ProductScoringAgent:
         compliance_safety = self.compute_compliance_safety(product_id)
         logger.info(f"Compliance and safety score for product_id {product_id} is {compliance_safety}")
 
-        product_score = (0.25 * demand_growth 
+        product_score = (0.25 * demand_strength 
                         + 0.2 * low_competition_score 
                         + 0.2 * expected_margin 
                         + 0.1 * logistics_simplicity 
@@ -60,7 +62,7 @@ class ProductScoringAgent:
         
         self.product_score_dict["classification_reason"] = reason
         self.product_score_dict["classification"] = classification
-        self.product_score_dict["demand_growth"] = demand_growth
+        self.product_score_dict["demand_strength"] = demand_strength
         self.product_score_dict["low_competition_score"] = low_competition_score
         self.product_score_dict["expected_margin"] = expected_margin
         self.product_score_dict["logistics_simplicity"] = logistics_simplicity
@@ -76,6 +78,27 @@ class ProductScoringAgent:
         return product_score, self.product_score_dict
 
     # Level 1 metrics
+
+    def compute_demand_strength(self, product_id):
+        """
+        Computes the demand growth for a product
+        """
+        print ("Computing demand growth")
+        order_score = self.compute_order_score(product_id)
+        search_trend_growth = self.compute_search_trend_growth(product_id)
+        review_growth = self.compute_review_growth(product_id)
+
+        demand_growth = (0.5 * order_score 
+                        + 0.3 * search_trend_growth
+                        + 0.2 * review_growth)
+        
+        self.product_score_dict["demand_strength_components"] = {
+            "order_score": order_score,
+            "search_trend_growth": search_trend_growth,
+            "review_growth": review_growth
+        }
+
+        return demand_growth
 
     def compute_demand_growth(self, product_id):
         """
@@ -243,6 +266,23 @@ class ProductScoringAgent:
 
 
     #Level 2 metrics 
+    def compute_order_score(self, product_id):
+        """
+        Computes the order score for a product
+        """
+        print ("Computing order score")
+        number_of_orders = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_orders"].values[0]
+        max_number_of_orders = self.products_data["number_of_orders"].max()
+
+        
+        if max_number_of_orders == 0:
+            logger.info(f"[WARNING] max_number_of_orders is null, for product_id : {product_id}. Setting order score to 0")
+
+        order_score = log(number_of_orders + 1)/log(max_number_of_orders + 1)
+
+        print (f"order_score is : {order_score}")
+        return order_score
 
     def compute_order_growth(self, product_id):
         """
