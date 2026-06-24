@@ -52,7 +52,6 @@ scalp massage brush, silicone facial cleansing pad, makeup puff, cosmetic spatul
 storage case. 
 
 
-
 ### Product table
 CREATE TABLE products ( 
     id SERIAL PRIMARY KEY, 
@@ -84,6 +83,8 @@ product_score = 0.25*demand_growth
 ```
 
 1. demand_growth formula:
+
+- ITER 1
 ```
 demand_growth = 0.5*OrderGrowth 
                 + 0.3*SearchTrendGrowth 
@@ -100,6 +101,22 @@ demand_growth = 0.5*OrderGrowth
 
 **Note :** Get Order and Reviews from AliExpress, and Search from **Google Trend** particulary the trend score. 
 
+- ITER 2: 
+Since we are unable of finding Order this month and order last month, we decided to change the formula to :
+
+```
+demand_strength = 0.5 * OrderScore
+                  + 0.3 * SearchTrendGrowth
+                  + 0.1 * ProductRating
+                  + 0.1 * ReviewScore
+```
+Where `OrderScore = log(number_of_orders + 1)/log(max_number_of_orders + 1)`
+
+**and** `SearchTrendGrowth = SearchTrend_of_one_month = (SearchThisMonth - SearchLastMonth)/SearchLastMonth`
+
+**and** `ProductRating = product_rating / 5` **Note :** product_rating isin [0, 5]
+
+**and** `ReviewScore = log(numbre_of_five_stars_reviews + 1)/log(max_number_of_five_stars_reviews)`
 2. Low_competition formula :
 ```
 LowCompetitionScore =
@@ -177,6 +194,7 @@ SupplierReliabilityScore = 0.3 * SupplierRatingScore +
 **Note :** Supplier informations are better to get from AliBaba
 
 6. tiktok_virality score: 
+- ITER 1
 ``` 
 TikTokViralityScore =
     0.6 * TrendGrowthScore +
@@ -191,6 +209,19 @@ TikTokViralityScore =
 **Note :** you can add  EngagementScore = log(TotalEngagement + 1) to the formula
 
 **Note :** Get Tiktok data from TikTok Creative Center
+
+- ITER 2
+```
+TikTokViralityScore = 0.4 * CreatorAdoptionScore 
+                        + 0.3 * TiktokPostsScore
+                        + 0.3 * TiktokLikesScore 
+```
+
+**Where** `CreatorAdoptionScore = NumberOfCreators / MaxNumberOfCreators`
+
+**and** `TiktokPostsScore = NumberOfPosts / MaxNumberOfPosts`
+ 
+**and** `TiktokLikesScore = NumberOfLikes / MaxNumberOfLikes`
 
 7. compliance_safety formula :
 
@@ -550,7 +581,9 @@ id	product_name	product_category	selling_price	product_cost	shipping_cost	packag
 
 
 ### How to collect data : Iter 1
+
 **Legend**
+
 | Status             | Meaning                                                                       |
 | ------------------ | ----------------------------------------------------------------------------- |
 | 🟢 Manual          | Can be collected manually from Shopee, AliExpress, Coupang, supplier websites |
@@ -558,7 +591,9 @@ id	product_name	product_category	selling_price	product_cost	shipping_cost	packag
 | 🔵 Derived         | Should be computed by your system                                             |
 | 🔴 Hard/Impossible | Not reliably available; use proxy metrics                                     |
 
+
 **Collection**
+
 | Feature                         | Manual? | API? | Derived? | Notes                                     |
 | ------------------------------- | ------- | ---- | -------- | ----------------------------------------- |
 | selling_price                   | 🟢      | 🟢   |          | Seller decides final price                |

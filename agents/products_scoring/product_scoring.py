@@ -85,17 +85,23 @@ class ProductScoringAgent:
         """
         print ("Computing demand growth")
         order_score = self.compute_order_score(product_id)
-        search_trend_growth = self.compute_search_trend_growth(product_id)
-        review_growth = self.compute_review_growth(product_id)
+        #search_trend_growth = self.compute_search_trend_growth(product_id)
+        search_trend_growth = self.products_data.loc[self.products_data["id"] == product_id,
+                                                     "search_three_month_growth"].values[0]
+        product_rating_score = self.compute_product_rating_score(product_id)
+        review_score = self.compute_review_score(product_id)
+        
 
         demand_growth = (0.5 * order_score 
                         + 0.3 * search_trend_growth
-                        + 0.2 * review_growth)
+                        + 0.1 * product_rating_score
+                        + 0.1 * review_score)
         
         self.product_score_dict["demand_strength_components"] = {
             "order_score": order_score,
             "search_trend_growth": search_trend_growth,
-            "review_growth": review_growth
+            "product_rating_score": product_rating_score,
+            "review_score" : review_score
         }
 
         return demand_growth
@@ -235,8 +241,9 @@ class ProductScoringAgent:
         Computes the TikTok virality score for a product
         """
         print ("Computing TikTok virality score")
-        trend_growth_score = self.compute_trend_growth_score(product_id)
+        #trend_growth_score = self.compute_trend_growth_score(product_id)
         creator_adoption_score = self.compute_creator_adoption_score(product_id)
+        tiktok_posts_score = self.compute_
 
         tiktok_virality_score = (0.6 * trend_growth_score + 
                                 0.4 * creator_adoption_score)
@@ -334,6 +341,31 @@ class ProductScoringAgent:
 
         print (f"search_trend_growth is : {search_trend_growth}")
         return search_trend_growth
+    
+    def compute_product_rating_score (self, product_id):
+        """
+        Computes product rating score
+        """
+        product_rating = self.products_data.loc[self.products_data["id"] == product_id, 
+                                                "product_rating"].values[0]
+        product_rating_score = product_rating / 5
+        print (f"rating score for product : {product_id} is {product_rating_score}")
+
+        return product_rating_score
+    
+    def compute_review_score(self, product_id):
+        """
+        Computes review score
+        """
+        number_of_five_stars_reviews = self.products_data.loc[self.products_data["id"] == product_id, 
+                                                              "number_of_five_stars_reviews"].values[0]
+        max_number_of_five_stars_reviews = self.products_data["number_of_five_stars_reviews"].max()
+
+
+        review_score = log(number_of_five_stars_reviews + 1)/log(max_number_of_five_stars_reviews + 1)
+        print (f"Review score for product_id : {product_id} is {review_score}")
+
+        return review_score
 
     def compute_review_growth(self, product_id):
         """
@@ -584,13 +616,10 @@ class ProductScoringAgent:
         """
         number_of_creators = self.products_data.loc[self.products_data["id"] == product_id, 
                                                 "number_of_creators"].values[0]
-        max_nbr_creators = 1000
+        max_nbr_creators = self.products_data.loc["number_of_creators"].max()
 
-        if number_of_creators >= max_nbr_creators:
-            logger.info("Number of creators surpasses the max, creator adoption is 1")
-            creator_adoption_score = 1
-        else:
-            creator_adoption_score = log(number_of_creators + 1) / log(max_nbr_creators + 1)
+
+        creator_adoption_score = number_of_creators / max_nbr_creators
 
         print (f"number of creators is {number_of_creators}")
         print (f"creator_adoption_score is : {creator_adoption_score}")

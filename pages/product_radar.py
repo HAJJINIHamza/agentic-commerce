@@ -24,6 +24,7 @@ uploaded_file = st.file_uploader("Upload products (csv)", type=["csv"])
 if uploaded_file: 
     print("Reading file...")
     product_data = pd.read_csv(uploaded_file, sep=";", encoding_errors="ignore")
+    print (product_data)
 
     df = {  "product_id": [],
             "product_name": [],
@@ -39,7 +40,8 @@ if uploaded_file:
             "classification": [],
             "classification_reason": []
         }
-
+    print ("Columns : ", product_data.columns)
+    print (" IDs : ", product_data["id"].values)
     for product_id in product_data["id"].values:
         product_scoring_agent = ProductScoringAgent(product_data)
         product_score, score_components = product_scoring_agent.score_product(product_id)
