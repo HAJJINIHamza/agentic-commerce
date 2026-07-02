@@ -43,7 +43,7 @@ class ProductSellingPriceAgent:
         product_cost = self.data.loc[self.data["id"] == product_id, "product_cost"].values[0]
         shipping_cost = self.data.loc[self.data["id"] == product_id, "shipping_cost"].values[0]
         packaging_cost = self.data.loc[self.data["id"] == product_id, "packaging_cost"].values[0]
-        international_shipping_cost = self.data.loc[self.data["id"] == product_id, "international_shipping_cost"].values[0]
+        #international_shipping_cost = self.data.loc[self.data["id"] == product_id, "international_shipping_cost"].values[0]
         platform_fees = self.data.loc[self.data["id"] == product_id, "platform_fees"].values[0]
         advertising_cost = self.data.loc[self.data["id"] == product_id, "advertising_cost"].values[0]
         payment_fees = self.data.loc[self.data["id"] == product_id, "payment_fees"].values[0]
@@ -51,18 +51,18 @@ class ProductSellingPriceAgent:
         fixed_cost = ( product_cost
                         + shipping_cost
                         + packaging_cost
-                        + international_shipping_cost
+                        #+ international_shipping_cost
                         + platform_fees
                         + advertising_cost
                         + payment_fees
-                        + advertising_cost )
+                        )
         
         self.product_selling_dict["fixed_cost"] = fixed_cost
         self.product_selling_dict["fixed_cost_components"] = {
             "product_cost": product_cost,
             "shipping_cost": shipping_cost,
             "packaging_cost": packaging_cost,
-            "international_shipping_cost": international_shipping_cost,
+            #"international_shipping_cost": international_shipping_cost,
             "platform_fees": platform_fees,
             "advertising_cost": advertising_cost,
             "payment_fees": payment_fees
