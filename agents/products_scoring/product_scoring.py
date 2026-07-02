@@ -87,7 +87,7 @@ class ProductScoringAgent:
         order_score = self.compute_order_score(product_id)
         #search_trend_growth = self.compute_search_trend_growth(product_id)
         search_trend_growth = self.products_data.loc[self.products_data["id"] == product_id,
-                                                     "search_three_month_growth"].values[0]
+                                                     "search_three_months_growth"].values[0]
         product_rating_score = self.compute_product_rating_score(product_id)
         review_score = self.compute_review_score(product_id)
         
@@ -219,18 +219,21 @@ class ProductScoringAgent:
         supplier_rating_score = self.compute_supplier_rating_score(product_id)
         moq_score = self.compute_moq_score(product_id)
         supplier_response_rate_score = self.compute_supplier_response_rate_score(product_id)
-        order_volume_score = self.compute_order_volume_score(product_id)
+        #order_volume_score = self.compute_order_volume_score(product_id)
+        delivery_time_score = self.compute_delivery_time_score(product_id)
 
         supplier_reliability_score = (0.3 * supplier_rating_score + 
                                     0.3 * moq_score + 
                                     0.2 * supplier_response_rate_score + 
-                                    0.2 * order_volume_score)
+                                    #0.2 * order_volume_score
+                                    0.2 * delivery_time_score)
         
         self.product_score_dict["supplier_reliability_components"] = {
             "supplier_rating_score": supplier_rating_score,
             "moq_score": moq_score,
             "supplier_response_rate_score": supplier_response_rate_score,
-            "order_volume_score": order_volume_score
+            "delivery_time_score": delivery_time_score
+            #"order_volume_score": order_volume_score
         }
 
         print (f"supplier_reliability_score is : {supplier_reliability_score}")
@@ -242,16 +245,20 @@ class ProductScoringAgent:
         """
         print ("Computing TikTok virality score")
         #trend_growth_score = self.compute_trend_growth_score(product_id)
-        creator_adoption_score = self.compute_creator_adoption_score(product_id)
-        tiktok_posts_score = self.compute_
 
-        tiktok_virality_score = (0.6 * trend_growth_score + 
-                                0.4 * creator_adoption_score)
+        tiktok_posts_score = self.compute_tiktok_posts_score(product_id)
+        tiktok_likes_score = self.compute_tiktok_likes_score(product_id)
+        tiktok_views_score = self.compute_tiktok_views_score(product_id)
+
+        tiktok_virality_score = (0.5 * tiktok_posts_score + 
+                                 0.3 * tiktok_likes_score
+                                + 0.2 * tiktok_views_score)
         
         self.product_score_dict["tiktok_virality_components"] = {
-            "trend_growth_score": trend_growth_score,
-            "creator_adoption_score": creator_adoption_score
-        }
+            "tiktok_posts_score": tiktok_posts_score,
+            "tiktok_likes_score": tiktok_likes_score,
+            "tiktok_views_score": tiktok_views_score
+            }
 
         print (f"tiktok_virality_score is : {tiktok_virality_score}")
         return tiktok_virality_score
@@ -580,6 +587,57 @@ class ProductScoringAgent:
 
         print (f"order volume score is : {order_volume_score}")
         return order_volume_score
+    
+    def compute_tiktok_posts_score(self, product_id):
+        """
+        Computes tiktok posts score
+        """
+
+        number_of_posts = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_hashtag_mentions"].values[0]
+        max_number_of_posts = self.products_data["number_of_hashtag_mentions"].max()
+
+        if max_number_of_posts == 0:
+            logger.info(f"Maximum number of posts is null, this isn't normal")
+            raise ValueError("Maximum number of posts can't be null")
+        
+        tiktok_posts_score = log(number_of_posts + 1) / log(max_number_of_posts + 1)
+        
+        return tiktok_posts_score
+        
+    def compute_tiktok_likes_score(self, product_id):
+        """
+        Computes tiktok likes score
+        """
+
+        number_of_likes = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_likes"].values[0]
+        max_number_of_likes = self.products_data["number_of_likes"].max()
+
+        if max_number_of_likes == 0:
+            logger.info(f"Maximum number of likes is null, this isn't normal")
+            raise ValueError("Maximum number of likes can't be null")
+        
+        tiktok_likes_score = log(number_of_likes + 1) / log(max_number_of_likes + 1)
+        
+        return tiktok_likes_score
+    
+    def compute_tiktok_views_score(self, product_id):
+        """
+        Computes tiktok views score
+        """
+        number_of_views = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_hashtag_views"].values[0]
+        max_number_of_views = self.products_data["number_of_hashtag_views"].max()
+
+        if max_number_of_views == 0:
+            logger.info(f"Maximum number of views is null, this isn't normal")
+            raise ValueError("Maximum number of views can't be null")
+        
+        tiktok_views_score = log(number_of_views + 1) / log(max_number_of_views + 1)
+        
+        return tiktok_views_score
+
 
     def compute_trend_growth_score(self, product_id):
         """
