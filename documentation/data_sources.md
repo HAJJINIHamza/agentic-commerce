@@ -48,3 +48,11 @@ CREATE TABLE suppliers (
     export_ready BOOLEAN, 
     risk_score FLOAT 
 ); 
+
+### ITER 1 DATA SOURCES FOR PRODUCT DATASET
+- Shopee : https://shopee.sg/search?keyword=portable%20detangling%20brush&noCorrection=true&page=0
+- TradeKorea : https://www.tradekorea.com/product/detail/P539583/Penguin-Clip.html
+- AliBaba : https://www.alibaba.com/search/page?spm=a2700.prosearch.the-new-header_fy23_pc_search_bar.searchButton&SearchScene=proSearch&SearchText=portable+detangling+brush&pro=true&from=pcHomeContent
+- TikTok Hashtags : https://tiktokhashtags.com/hashtag/siliconemask/
+- TikTok platform : https://www.tiktok.com/tag/siliconemask
+- Accio B2B chatbot : https://www.accio.com/c/48386737-9c73-46dc-afde-084878281543

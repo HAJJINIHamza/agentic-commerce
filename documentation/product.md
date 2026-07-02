@@ -172,7 +172,30 @@ Weight |	Approx Cost
 1 kg |	$7 – $12
 2 kg |	$10 – $18
 5 kg |	$25 – $40
+
+Korea --------> Singapore 
+weight | Approx shipping cost
+-----  | -----
+Up to 0.5 |  10.68
+1.0   | 11.65	
+1.5 |	13.60
+2.0 |	16.51
+
+
 > Link of [Korea Post](https://www.koreapost.go.kr/) where you can find shipping prices
+> For most cross-border Shopee sellers, the largest logistics cost you bear is the international leg, while Shopee often collects shipping fees from the buyer and manages local delivery.
+
+Korea post shipping cost might appear expensive that is why we can use : 3PL
+
+| Weight Range | International Shipping Cost / Unit |
+| ------------ | ---------------------------------: |
+| ≤ 0.25 kg    |                        **US$0.60** |
+| 0.25–0.50 kg |                        **US$0.90** |
+| 0.50–1.00 kg |                        **US$1.50** |
+| 1.00–2.00 kg |                        **US$2.50** |
+
+
+For a typical MOQ shipment (500–1000 units) from South Korea to Singapore, most beauty/accessory products under 0.5 kg end up around $0.90 per unit in international freight.
 
 5. supplier_reliability formula : 
 ```
@@ -217,11 +240,11 @@ TikTokViralityScore = 0.4 * CreatorAdoptionScore
                         + 0.3 * TiktokLikesScore 
 ```
 
-**Where** `CreatorAdoptionScore = NumberOfCreators / MaxNumberOfCreators`
-
-**and** `TiktokPostsScore = NumberOfPosts / MaxNumberOfPosts`
+**and** `TiktokPostsScore = log(NumberOfPosts+1) / log(MaxNumberOfPosts+1)`
  
-**and** `TiktokLikesScore = NumberOfLikes / MaxNumberOfLikes`
+**and** `TiktokLikesScore = log(NumberOfLikes+1) / log(MaxNumberOfLikes+1)`
+
+> We get Number of posts and number of likes by searching for the #product_name
 
 7. compliance_safety formula :
 
