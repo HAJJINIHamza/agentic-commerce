@@ -197,6 +197,8 @@ Korea post shipping cost might appear expensive that is why we can use : 3PL
 
 For a typical MOQ shipment (500–1000 units) from South Korea to Singapore, most beauty/accessory products under 0.5 kg end up around $0.90 per unit in international freight.
 
+> Information in shopee store: Cross-border shipping cost (Hidden fee)SG - llmcoreai.sg   $0.80
+
 5. supplier_reliability formula : 
 ```
 SupplierReliabilityScore = 0.3 * SupplierRatingScore +
@@ -654,4 +656,23 @@ id	product_name	product_category	selling_price	product_cost	shipping_cost	packag
 | service_fee_rate                | 🟢      |      |          | Platform policy                           |
 | ad_cost_rate                    |         |      | 🔵       | Calculated                                |
 | target_margin_rate              |         |      | 🔵       | Business decision                         |
+
+
+
+### PRODUCT COSTS HANDLING : who hanles what : 
+
+| Cost                                                | Usually paid by                                                                 |
+| --------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Product cost                                        | You                                                                             |
+| Packaging                                           | You                                                                             |
+| Domestic shipping to Shopee warehouse (if required) | You                                                                             |
+| Platform fees                                       | You                                                                             |
+| Payment fees                                        | You                                                                             |
+| Advertising                                         | You                                                                             |
+| International shipping                              | Usually Shopee                                                                  |
+| Currency conversion                                 | Shopee                                                                          |
+| Cross-border logistics                              | Usually Shopee                                                                  |
+| Marketplace price adjustment                        | Shopee                                                                          |
+| Import taxes/VAT to buyer's country                 | Depends on the destination; often collected from the buyer or handled by Shopee |
+
 
