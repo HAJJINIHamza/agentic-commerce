@@ -17,7 +17,11 @@ class listingGenerationAgent:
 
     def get_completion_from_model(self,
                                   prompt : str, 
-                                  model_id : str = "google/gemma-4-31b-it:free"):
+                                  #"google/gemma-4-31b-it:free"
+                                  #"meta-llama/llama-3.3-70b-instruct:free"
+                                  # "meta-llama/llama-3.2-3b-instruct:free"
+                                  model_id : str = "openai/gpt-oss-20b:free"
+                                  ):
         """
         Get completion of a prompt from a model
 
