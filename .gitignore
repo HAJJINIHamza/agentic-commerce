@@ -221,3 +221,9 @@ __marimo__/
 
 #notebooks
 notebooks/
+
+#Models
+models/
+
+#ressources
+ressources/images

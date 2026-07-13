@@ -7,3 +7,8 @@ plotly==6.7.0
 python-dotenv==1.2.2
 requests
 dotenv
+torch==2.11.0
+transformers==5.13.0
+diffusers==0.39.0
+accelerate==1.14.0
+sentencepiece==0.2.1
