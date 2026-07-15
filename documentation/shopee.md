@@ -72,3 +72,97 @@ Use SHIPPING FEE PROMOTION to attract more buyers by setting shipping fee to fre
 Use TOP PICKS to create collections of products 4 to 8 to be published as one group in you page (representing your recommendation to customers)
 
 Use FOLLOW PRIZE to increase customers loyalty and get them to follow the shop by creating rewards (vouchers) upon following the shop
+
+
+#### Product Fullfilement on Shopee:
+FULL PROCESS :
+
+```
+Customer order product
+    │
+    ▼
+Shopee receives the order
+    │
+    ▼
+I receive order notification
+    │
+    ▼
+My AI system verifies inventory with supplier
+    │
+    ▼
+My AI sends purchase order to supplier
+    │
+    ▼
+I pay supplier
+    │
+    ▼
+Supplier packs product
+    │
+    ▼
+Supplier ships parcel
+    │
+    ▼
+Tracking number generated
+    │
+    ▼
+Tracking uploaded to Shopee
+    │
+    ▼
+Parcel travels Korea → Singapore (could be taken care of by supplier or shopee)
+    │
+    ▼
+Customs
+    │
+    ▼
+Local courier
+    │
+    ▼
+Customer receives package
+    │
+    ▼
+Shopee releases my payment
+```
+
+--------
+
+WHO DOES WHAT ?
+
+| Task                   | You        | Supplier                                     | Shopee                                          |
+| ---------------------- | ---------- | -------------------------------------------- | ----------------------------------------------- |
+| Product research       | ✅          | ❌                                            | ❌                                               |
+| Pricing                | ✅          | ❌                                            | ❌                                               |
+| Listing creation       | ✅          | ❌                                            | ❌                                               |
+| Marketing              | ✅          | ❌                                            | Some promotions available                       |
+| Receive customer order | ✅          | ❌                                            | ✅                                               |
+| Hold customer payment  | ❌          | ❌                                            | ✅                                               |
+| Buy from supplier      | ✅          | ❌                                            | ❌                                               |
+| Pack product           | ❌          | ✅                                            | ❌                                               |
+| Ship product           | ❌          | ✅                                            | Coordinates platform logistics where applicable |
+| Upload tracking        | ✅          | Provides tracking                            | Displays tracking                               |
+| Customer service       | ✅          | Sometimes                                    | Limited                                         |
+| Refund management      | ✅          | Assists                                      | Manages platform workflow                       |
+| Returns                | Coordinate | Receives or processes (depends on agreement) | Provides return process                         |
+
+
+#### Problem senario 
+Problem
+Customer orders 1 unit of product 1
+Supplier of product 1 asks for MOQ (100 units) to sell with product cost PC
+Order 1 unit from supplier for PC not possible
+Order MOQ unit from supplier for PC : lead to inventory (99 units). This is risk
+
+Solution : 
+
+Instead of Manufacturer 
+Look for 
+
+Supplier | Status | MOQ | Disadvantage |
+--- | --- | --- | --- |
+Search for Wholesaler | Distributors that work with small sellers | 1 to 20 units | Source with a higher cost lead to low margin. Sometimes are hard to find for a specific product |
+Dropshipping supplier | Distributors that keeps inventory, they are aware of dropshipping supplier | 1 unit | Source with a higher cost lead to low margin. Sometimes are hard to find for a specific product |
+
+
+Strategy : 
+
+STAGE 1 : Use dropshipping supplier (moq = 1) with higher product cost, accept lower margins, fullfill orders and gain customers trust. 
+STAGE 2 : Once orders reach 100 or more units, scale by sourcing products from suppliers (moq bigger than 100) with lower PC.

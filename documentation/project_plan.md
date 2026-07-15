@@ -68,7 +68,7 @@ Output:
 - Add save data (excel or csv) at the end of product scoring, supplier scoring, product selling, listing generation (Mostly done)
 - Add original data structure (supplier_id, product_id) to product, supplier and listing (In progess)
 - Generate some data from Chatgpt and use it for testing, like products and suppliers. (DONE)
-- An if else condition to verify compliance safety via category isn't the best approach, think about using an LLM for decision
+- An if else condition to verify compliance safety via category isn't the best approach, think about using an LLM for decision (Thinking about it)
 
 ### TODO 02-07-2026
 - Product radar top section should show at least 3 products not only one
@@ -77,3 +77,6 @@ Output:
 - Add data saving to pricing page and listing page
 - Fix the listing generation problem, if llm can't get completion then try again in few seconds automatically or think about switching to a different model
 - Add an image generation model, to automatically generate images.
+
+### TODO 13-07-2026
+- Search and score supplier for both products you've added to shopee 
