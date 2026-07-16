@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from agents.listing_generation.listing_generator import listingGenerationAgent
 from src.logger import get_logger
 
-logger = get_logger()
+logger = get_logger(__name__)
 #
 load_dotenv()
 os.getenv("OPENROUTER_API_KEY")
