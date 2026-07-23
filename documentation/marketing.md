@@ -148,7 +148,7 @@ Why not set maxCPC to the maximum value possible, example : maxCPC = 0.35 ?
 
 The problem is nobody knows what is the maximum value possible. To simplify let's estimate it to 0.35.
 
-seller | beddin price | quality score
+seller | bedding price | quality score
 --- | --- | --- |
 A | 0.1 | 90 |
 B | 0.15 | 90 |
