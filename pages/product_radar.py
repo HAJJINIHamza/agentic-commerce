@@ -63,7 +63,7 @@ if uploaded_file:
 
     df = pd.DataFrame(df)
     df.sort_values(by="product_score", ascending=False, inplace=True)
-    save_csv_file(df, "product_scores", "data/product_scoring")
+    save_csv_file(df, "product_scores", "data/product_scoring/product_scores/")
 
     st.dataframe(df) 
  
