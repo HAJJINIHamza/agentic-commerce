@@ -1,0 +1,13 @@
+supplier_id;product_id;supplier_name;product_name;supplier_rating;moq;supplier_response_rate;supplier_completed_orders;supplier_max_orders
+1001;501;Alpha Manufacturing;Wireless Earbuds;4,9;10;99;9500;10000
+1002;502;Budget Source Ltd;Phone Case;3,2;5000;60;1200;10000
+1003;503;FastTrade Co;Portable Blender;4,4;50;98;4200;5000
+1004;504;NewGen Suppliers;LED Desk Lamp;2,8;20;75;50;1000
+1005;505;MegaExport Group;Smart Watch;4,7;1000;92;15000;20000
+1006;506;QuickShip Factory;Travel Backpack;4,1;100;85;2300;3000
+1007;507;Elite Manufacturing;Gaming Mouse;5;5;100;8000;8000
+1008;508;Slow Response Inc;Yoga Mat;3,9;30;40;5000;7000
+1009;509;BulkGoods China;Water Bottle;4,3;10000;88;25000;30000
+1010;510;Startup Supplier;Laptop Stand;3,5;15;95;120;500
+1011;511;Premium Tech Parts;USB-C Hub;4,8;25;97;6000;6500
+1012;512;Risky Vendor;Power Bank;2,1;200;30;100;5000

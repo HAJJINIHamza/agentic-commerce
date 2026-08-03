@@ -1,0 +1,10 @@
+supplier_id,product_id,supplier_name,product_name,supplier_score,product_cost_score,moq_score,supplier_response_time_score,supplier_tenure_score,place_of_origin_score,classification
+9,7,"BEAUTY IN ASIA CO., LTD.",Reusable silicone mask cover,0.829166666666667,0.78125,1,0.5,0.333333333333333,1,Qualified
+1,7,"LAON COMMERCE co.,ltd.",Reusable silicone mask cover,0.566973886328725,0.21505376344086,1,0.142857142857143,0.333333333333333,1,Review
+7,7," Damoa Cosmetic Co., Ltd.",Reusable silicone mask cover,0.412358239923903,0.571428571428571,0.175220024427547,0.25,0.773976031629121,1,Avoid
+8,7,K-bridge,Reusable silicone mask cover,0.387447877204619,0.357142857142857,0.417032391424246,0.111111111111111,0.333333333333333,1,Avoid
+3,7,"CAC Trading Co.,Ltd.",Reusable silicone mask cover,0.374559811666765,0.591715976331361,0.108572441724441,0.111111111111111,0.666666666666667,1,Avoid
+4,7, K-bridge,Reusable silicone mask cover,0.349724454992842,0.425531914893617,0.254334778144042,0.111111111111111,0.333333333333333,1,Avoid
+5,7,"NEWLINE PLUS CO., LTD",Reusable silicone mask cover,0.335490781003534,0.277777777777778,0.269282508064391,0.5,0.333333333333333,1,Avoid
+2,7,INTERSTORY,Reusable silicone mask cover,0.32903275798629,0.396825396825397,0.0924231648069942,0.333333333333333,1,1,Avoid
+6,7, GBSA (Gyeonggido Business & Science Accelerator),Reusable silicone mask cover,0.250422064427379,0.151515151515152,0.291206676219962,0.0666666666666667,0.333333333333333,1,Avoid
