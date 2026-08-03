@@ -51,10 +51,10 @@ class ProductSellingPriceAgent:
         fixed_cost = ( product_cost
                         + shipping_cost
                         + packaging_cost
+                        + advertising_cost                        
                         #+ international_shipping_cost
-                        + platform_fees
-                        + advertising_cost
-                        + payment_fees
+                        #+ platform_fees
+                        #+ payment_fees
                         )
         
         self.product_selling_dict["fixed_cost"] = fixed_cost
@@ -85,8 +85,9 @@ class ProductSellingPriceAgent:
                     + transaction_fee_rate 
                     + payoneer_fee_rate 
                     + service_fee_rate 
-                    + ad_cost_rate 
-                    + target_margin_rate )
+                    #+ ad_cost_rate 
+                    #+ target_margin_rate 
+                    )
         
         self.product_selling_dict["total_rate"] = total_rate
         self.product_selling_dict["total_rate_components"] = {
