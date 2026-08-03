@@ -31,6 +31,8 @@ if st.session_state.upload_file_mode:
         if filled_info:
             product_data = pd.read_csv(uploaded_file, sep=";", encoding_errors="ignore")
             print ("product_data :", product_data)
+            print ("produc_data columns :", product_data.columns)
+            print ("Product data values :", product_data.values)
             product_data["id"] = product_data["id"].astype(str)
             product_id = str(product_id).strip()
 
