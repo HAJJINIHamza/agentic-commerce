@@ -1,0 +1,13 @@
+{
+    "shipping_cost": 0,
+    "platform_fees": 1.7418,
+    "advertising_cost": 3.1,
+    "packaging_cost": 0.08,
+    "payment_fees": 0.06,
+    "commission_rate": 0.1199,
+    "transaction_fee_rate": 0.0218,
+    "payoneer_fee_rate": 0.009,
+    "service_fee_rate": 0.0,
+    "ad_cost_rate": 0.0,
+    "target_margin_rate": 0.0
+}
