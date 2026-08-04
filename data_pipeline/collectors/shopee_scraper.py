@@ -1,6 +1,10 @@
 from bs4 import BeautifulSoup
 import re
 from pathlib import Path
+import pandas as pd 
+from src.logger import get_logger 
+
+logger = get_logger(__name__)
 
 def extract_avg_selling_price_from_page(id, product_name, html_file):
     """
@@ -16,14 +20,13 @@ def extract_avg_selling_price_from_page(id, product_name, html_file):
     with open(html_file, "r", encoding="utf-8") as f:
         html = f.read()
 
+    print ("Read HTML file")
     soup = BeautifulSoup(html, "html.parser")
-
     prices = []
 
     product_cards = soup.select(
         'li.shopee-search-item-result__item[data-sqe="item"]'
     )
-
     for card in product_cards:
 
         text = card.get_text(" ", strip=True)
@@ -37,13 +40,15 @@ def extract_avg_selling_price_from_page(id, product_name, html_file):
         if matches:
             price = float(matches[0].replace(",", ""))
             prices.append(price)
-
+    
     if not prices:
         return {
             "prices": [],
             "number_of_products": 0,
             "avg_selling_price": None
         }
+
+    print (f"avg_selling_price: {round(sum(prices) / len(prices), 2)}")
 
     return {
         "id":id,
@@ -54,6 +59,44 @@ def extract_avg_selling_price_from_page(id, product_name, html_file):
     }
 
 
+def get_avg_selling_price(id, product_name):
+    """
+    Get the average selling price of a product by aggregating data from multiple Shopee HTML pages.
+    """
+
+    pages_path = f"data/scrapping/html_pages/{id}/selling_price_pages/"
+    pages_path = Path(pages_path)
+    if not pages_path.exists():
+        raise FileNotFoundError(f"Directory not found: {pages_path}")
+    
+    print ("Pages path:", pages_path)
+    selling_prices = []
+    number_of_pages = 0
+
+    for html_file in pages_path.glob("*.html"):
+        print ("Html file :", html_file)
+        number_of_pages += 1
+        result = extract_avg_selling_price_from_page(id, product_name, html_file)
+        page_avg_selling_price = result["avg_selling_price"]
+        selling_prices.append(page_avg_selling_price)
+        print(f"Processed {html_file}: {result}")
+    
+    avg_selling_price = sum(selling_prices)/len(selling_prices) if selling_prices else None
+
+    js_result = {
+        "id":id,
+        "product_name": product_name,
+        "number_of_pages": number_of_pages,
+        "avg_selling_price": round(avg_selling_price, 2)
+    }
+
+    logger.info(f"Average selling price result for product {id} is {js_result["avg_selling_price"]}" )
+
+    return js_result
+
+# ------------------------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------------------------
 
 def extract_number_of_orders_from_page(id, product_name, html_file):
     """
@@ -72,6 +115,8 @@ def extract_number_of_orders_from_page(id, product_name, html_file):
     Returns:
         dict:
             {
+                "id": int,
+                "product_name": str,
                 "sold_units": [...],
                 "number_of_products": int,
                 "number_of_orders": int
@@ -121,10 +166,49 @@ def extract_number_of_orders_from_page(id, product_name, html_file):
     number_of_orders = sum(sold_units)
 
     return {
+        "id": id,
+        "product_name": product_name,
         "sold_units": sold_units,
         "number_of_products": len(sold_units),
         "number_of_orders": number_of_orders
     }
+
+def get_number_of_orders(id, product_name):
+    """"
+    Get the total number of orders for a product by aggregating data from multiple Shopee HTML pages.
+    """
+    pages_path = f"data/scrapping/html_pages/{id}/selling_price_pages/"
+    pages_path = Path(pages_path)
+    if not pages_path.exists():
+        raise FileNotFoundError(f"Directory not found: {pages_path}")
+    
+    number_of_orders = []
+    number_of_pages = 0
+
+    for html_file in pages_path.glob("*.html"):
+        print ("Html file :", html_file)
+        number_of_pages += 1
+        result = extract_number_of_orders_from_page(id, product_name, html_file)
+        page_number_of_orders = result["number_of_orders"]
+        number_of_orders.append(page_number_of_orders)
+        print(f"Processed {html_file}: {result}")
+    
+    total_number_of_orders = sum(number_of_orders) if number_of_orders else None
+
+    js_result = {
+        "id":id,
+        "product_name": product_name,
+        "number_of_pages": number_of_pages,
+        "total_number_of_orders": total_number_of_orders
+    }
+
+    logger.info(f"Total number of orders result for product {id} is {js_result["total_number_of_orders"]}" )
+
+    return js_result
+
+# ------------------------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------------------------
 
 def extract_average_product_rating_from_page(id, product_name, html_file):
     """
@@ -189,14 +273,16 @@ def extract_average_product_rating_from_page(id, product_name, html_file):
     average_product_rating = sum(ratings) / len(ratings)
 
     return {
+        "id": id,
+        "product_name": product_name,
         "ratings": ratings,
         "number_of_products": len(ratings),
         "average_product_rating": round(average_product_rating, 2)
     }
 
-def get_avg_selling_price(id, product_name):
+def get_average_product_rating(id, product_name):
     """
-    Get the average selling price of a product by aggregating data from multiple Shopee HTML pages.
+    Get the average product rating of a product by aggregating data from multiple Shopee HTML pages.
     """
 
     pages_path = f"data/scrapping/html_pages/{id}/selling_price_pages/"
@@ -204,33 +290,59 @@ def get_avg_selling_price(id, product_name):
     if not pages_path.exists():
         raise FileNotFoundError(f"Directory not found: {pages_path}")
     
-    print ("Pages path:", pages_path)
-    selling_prices = []
+    ratings = []
     number_of_pages = 0
 
     for html_file in pages_path.glob("*.html"):
         print ("Html file :", html_file)
         number_of_pages += 1
-        result = extract_avg_selling_price_from_page(id, product_name, html_file)
-        page_avg_selling_price = result["avg_selling_price"]
-        selling_prices.append(page_avg_selling_price)
+        result = extract_average_product_rating_from_page(id, product_name, html_file)
+        page_average_product_rating = result["average_product_rating"]
+        ratings.append(page_average_product_rating)
         print(f"Processed {html_file}: {result}")
     
-    avg_selling_price = sum(selling_prices)/len(selling_prices) if selling_prices else None
+    average_product_rating = sum(ratings)/len(ratings) if ratings else None
 
-    return {
+    js_result = {
         "id":id,
         "product_name": product_name,
         "number_of_pages": number_of_pages,
-        "avg_selling_price": round(avg_selling_price, 2)
+        "average_product_rating": round(average_product_rating, 2)
+    }
+
+    logger.info(f"Average product rating result for product {id} is {js_result["average_product_rating"]}" )
+
+    return js_result
+
+def get_search_three_month_growth(id, product_name):
+    """
+    Get the search three-month growth of a product by aggregating data from multiple Shopee HTML pages.
+    """
+    
+    df = pd.read_csv("data/scrapping/data_tables/search_three_months_growth_04-08-2026.csv", sep= ";")
+    search_three_month_growth = df[df["id"] == id]["search_three_month_growth"].values[0]
+    logger.info(f"Search three-month growth result for product {id} is {search_three_month_growth}" )
+
+    return {
+        "id": id,
+        "product_name": product_name,
+        "search_three_month_growth": search_three_month_growth
     }
 
 
+
+# ------------------------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------------------------
+
 #test
 if __name__ == "__main__":
-    html_file = "data/scrapping/html_pages/test - desk organizer - Prices and Deals - Jul 2026 _ Shopee Singapore.html"
+    html_file = "data/scrapping/html_pages/19/selling_price_pages/product_19_shopee_page_1.html"
     #result = extract_avg_selling_price_from_page(1213, "Desk organizer", html_file)
     #result = extract_number_of_orders_from_page(1213, "Desk organizer", html_file)
     #result = extract_average_product_rating_from_page(1213, "Desk organizer", html_file)
-    result = get_avg_selling_price(19, "Desk organizer")
+    #result = get_avg_selling_price(19, "Desk organizer")
+    #result = get_number_of_orders(19, "Desk organizer")
+    #result = get_average_product_rating(19, "Desk organizer")
+    result = get_search_three_month_growth(19, "Desk organizer")
     print(result)
