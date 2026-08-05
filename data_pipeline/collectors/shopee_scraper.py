@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import re
 from pathlib import Path
 import pandas as pd 
+import json 
+
 from src.logger import get_logger 
 
 logger = get_logger(__name__)
@@ -314,6 +316,10 @@ def get_average_product_rating(id, product_name):
 
     return js_result
 
+# ------------------------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------------------------
+
 def get_search_three_month_growth(id, product_name):
     """
     Get the search three-month growth of a product by aggregating data from multiple Shopee HTML pages.
@@ -329,11 +335,108 @@ def get_search_three_month_growth(id, product_name):
         "search_three_month_growth": search_three_month_growth
     }
 
+# ------------------------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------------------------
 
+def get_fixed_variables():
+    with open("data_pipeline/config/product_config.json", "r") as f:
+        fixed_variables = json.load(f)
+
+    return fixed_variables
 
 # ------------------------------------------------------------------------------------------------
 #
 # ------------------------------------------------------------------------------------------------
+
+def get_number_of_competitors_from_page(id, product_name, html_file):
+    """
+    Extract the number of competitors from a Shopee search-results HTML file.
+
+    A product is considered a competitor if at least one word from
+    product_name appears in the product card title.
+
+    Returns:
+        dict containing:
+        - number_of_competitors
+    """
+
+    # Read HTML file
+    with open(html_file, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Split product name into individual words
+    product_words = product_name.lower().split()
+    print ("Product words:", product_words)
+
+    # Find all Shopee product cards
+    product_cards = soup.select(
+        'li.shopee-search-item-result__item[data-sqe="item"]'
+    )
+
+    number_of_competitors = 0
+
+    for card in product_cards:
+
+        # Get product card title
+        title_element = card.select_one(
+        'div[role="group"][aria-label^="Product card:"]'
+        )
+
+        if title_element:
+            card_title = title_element.get("aria-label")
+            print ("Card title:", card_title)
+            card_title = card_title.replace("Product card: ", "", 1).lower()
+
+            if any(word in card_title for word in product_words):
+                number_of_competitors += 1
+
+    return {
+        "id": id,
+        "product_name": product_name,
+        "number_of_competitors": number_of_competitors
+    }
+
+def get_number_of_competitors(id, product_name):
+    """
+    Get the number of competitors for a product by aggregating data from multiple Shopee HTML pages.
+    """
+    
+    pages_path = f"data/scrapping/html_pages/{id}/selling_price_pages/"
+    pages_path = Path(pages_path)
+    if not pages_path.exists():
+        raise FileNotFoundError(f"Directory not found: {pages_path}")
+    
+    number_of_competitors_list = []
+    number_of_pages = 0
+
+    for html_file in pages_path.glob("*.html"):
+        print ("Html file :", html_file)
+        number_of_pages += 1
+        result = get_number_of_competitors_from_page(id, product_name, html_file)
+        page_number_of_competitors = result["number_of_competitors"]
+        number_of_competitors_list.append(page_number_of_competitors)
+        print(f"Processed {html_file}: {result}")
+    
+    total_number_of_competitors = sum(number_of_competitors_list) if number_of_competitors_list else None
+
+    js_result = {
+        "id":id,
+        "product_name": product_name,
+        "number_of_pages": number_of_pages,
+        "total_number_of_competitors": total_number_of_competitors
+    }
+
+    logger.info(f"Total number of competitors result for product {id} is {js_result}" )
+
+    return js_result
+
+# ------------------------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------------------------
+    
 
 #test
 if __name__ == "__main__":
@@ -344,5 +447,7 @@ if __name__ == "__main__":
     #result = get_avg_selling_price(19, "Desk organizer")
     #result = get_number_of_orders(19, "Desk organizer")
     #result = get_average_product_rating(19, "Desk organizer")
-    result = get_search_three_month_growth(19, "Desk organizer")
+    #result = get_search_three_month_growth(19, "Desk organizer")
+    #result = get_number_of_competitors_from_page(19, "Desk organizer", html_file)
+    #result = get_number_of_competitors(19, "Desk organizer")
     print(result)
