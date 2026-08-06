@@ -19,7 +19,7 @@ number_of_orders#
 search_three_months_growth	#
 product_rating	#
 number_of_five_stars_reviews	
-number_of_competitors	
+number_of_competitors	#
 avg_top_five_competitor_reviews	
 avg_margin	
 avg_selling_price	

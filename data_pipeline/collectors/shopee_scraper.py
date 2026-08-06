@@ -436,11 +436,147 @@ def get_number_of_competitors(id, product_name):
 # ------------------------------------------------------------------------------------------------
 #
 # ------------------------------------------------------------------------------------------------
+
+
+from bs4 import BeautifulSoup
+import re
+
+
+def get_avg_product_cost_from_page(id, product_name, html_file):
+    """
+    Extract product costs from Alibaba product cards whose title
+    contains at least one word from product_name.
+
+    For price ranges, the highest price is used:
+        $7.74       -> 7.74
+        $7.74-9.70  -> 9.70
+
+    Returns:
+        dict containing:
+        - product_costs
+        - avg_product_cost
+    """
+
+    # Read HTML file
+    with open(html_file, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Split product name into individual words
+    product_words = product_name.lower().split()
+
+    product_costs = []
+
+    # Find all Alibaba product cards
+    product_cards = soup.select(
+        'div.fy26-product-card-content'
+    )
+
+    for card in product_cards:
+
+        # Get product title
+        title_element = card.select_one(
+            'h2.searchx-product-e-title'
+        )
+
+        if not title_element:
+            continue
+
+        card_title = title_element.get_text(
+            " ", strip=True
+        ).lower()
+
+        # Check if at least one product-name word
+        # exists in the product title
+        if any(word in card_title for word in product_words):
+
+            # Find product price
+            price_element = card.select_one(
+                'div.searchx-product-price-price-main'
+            )
+
+            if not price_element:
+                continue
+
+            price_text = price_element.get_text(
+                " ", strip=True
+            )
+
+            # Extract ALL prices from the price text
+            # Example:
+            # "$7.74"       -> ["7.74"]
+            # "$7.74-9.70"  -> ["7.74", "9.70"]
+            matches = re.findall(
+                r'\$?\s*([\d,]+(?:\.\d{1,2})?)',
+                price_text
+            )
+
+            if matches:
+                # Convert prices to floats
+                prices = [
+                    float(price.replace(",", ""))
+                    for price in matches
+                ]
+
+                # Use the highest price
+                product_cost = max(prices)
+
+                product_costs.append(product_cost)
+
+    # Calculate average
+    if product_costs:
+        avg_product_cost = sum(product_costs) / len(product_costs)
+    else:
+        avg_product_cost = None
+
+    return {
+        "id": id,
+        "product_name": product_name,
+        "product_costs": product_costs,
+        "avg_product_cost": avg_product_cost
+    }
+
+def get_avg_product_cost(id, product_name):
+    """
+    Get the average product cost of a product by aggregating data from multiple Alibaba HTML pages.
+    """
+
+    pages_path = f"data/scrapping/html_pages/{id}/alibaba_pages/"
+    pages_path = Path(pages_path)
+    if not pages_path.exists():
+        raise FileNotFoundError(f"Directory not found: {pages_path}")
+    
+    product_costs = []
+    number_of_pages = 0
+
+    for html_file in pages_path.glob("*.html"):
+        print ("Html file :", html_file)
+        number_of_pages += 1
+        result = get_avg_product_cost_from_page(id, product_name, html_file)
+        page_avg_product_cost = result["avg_product_cost"]
+        if page_avg_product_cost is not None:
+            product_costs.append(page_avg_product_cost)
+        print(f"Processed {html_file}: {result}")
+    
+    avg_product_cost = sum(product_costs)/len(product_costs) if product_costs else None
+
+    js_result = {
+        "id":id,
+        "product_name": product_name,
+        "number_of_pages": number_of_pages,
+        "avg_product_cost": round(avg_product_cost, 2) if avg_product_cost is not None else None
+    }
+
+    logger.info(f"Average product cost result for product {id} is {js_result['avg_product_cost']}" )
+
+    return js_result
     
 
 #test
 if __name__ == "__main__":
     html_file = "data/scrapping/html_pages/19/selling_price_pages/product_19_shopee_page_1.html"
+    alibaba_html_file = "data/scrapping/html_pages/19/alibaba_pages/product_19_alibaba_page_1.html"
     #result = extract_avg_selling_price_from_page(1213, "Desk organizer", html_file)
     #result = extract_number_of_orders_from_page(1213, "Desk organizer", html_file)
     #result = extract_average_product_rating_from_page(1213, "Desk organizer", html_file)
@@ -450,4 +586,5 @@ if __name__ == "__main__":
     #result = get_search_three_month_growth(19, "Desk organizer")
     #result = get_number_of_competitors_from_page(19, "Desk organizer", html_file)
     #result = get_number_of_competitors(19, "Desk organizer")
+    result = get_avg_product_cost_from_page(19, "Desk organizer", alibaba_html_file)
     print(result)
