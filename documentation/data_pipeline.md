@@ -9,7 +9,7 @@ id
 product_name	
 product_category	
 selling_price	#
-product_cost	
+product_cost	#
 shipping_cost	#
 platform_fees	#
 advertising_cost#	
@@ -21,8 +21,8 @@ product_rating	#
 number_of_five_stars_reviews	
 number_of_competitors	#
 avg_top_five_competitor_reviews	
-avg_margin	
-avg_selling_price	
+avg_margin	#
+avg_selling_price	#
 delivery_time	
 weight	
 size	

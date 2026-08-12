@@ -551,7 +551,6 @@ def get_avg_product_cost(id, product_name):
     number_of_pages = 0
 
     for html_file in pages_path.glob("*.html"):
-        print ("Html file :", html_file)
         number_of_pages += 1
         result = get_avg_product_cost_from_page(id, product_name, html_file)
         page_avg_product_cost = result["avg_product_cost"]
@@ -568,10 +567,31 @@ def get_avg_product_cost(id, product_name):
         "avg_product_cost": round(avg_product_cost, 2) if avg_product_cost is not None else None
     }
 
-    logger.info(f"Average product cost result for product {id} is {js_result['avg_product_cost']}" )
+    logger.info(f"Average product cost result for product {id} is {js_result}" )
 
     return js_result
-    
+
+#------------------------------------------------------------------------------------------------
+#
+#------------------------------------------------------------------------------------------------
+
+def get_avg_margin_from_page(id, product_name,selling_prices, product_cost):
+    """
+    Extract product prices from a Shopee search-results HTML file and calculate the average margin.
+
+    Params:
+    -------
+    selling_prices : list of selling prices from get_avg_selling_price_from_page
+    product_cost : average product cost from get_avg_product_cost
+    """
+
+    margins = [price - product_cost for price in selling_prices if price is not None]
+
+    return {
+        "id": id,
+        "product_name": product_name,
+        "margins": margins,
+        "avg_margin": round(sum(margins) / len(margins), 2) if margins else None}
 
 #test
 if __name__ == "__main__":
@@ -580,11 +600,14 @@ if __name__ == "__main__":
     #result = extract_avg_selling_price_from_page(1213, "Desk organizer", html_file)
     #result = extract_number_of_orders_from_page(1213, "Desk organizer", html_file)
     #result = extract_average_product_rating_from_page(1213, "Desk organizer", html_file)
+    selling_prices = extract_avg_selling_price_from_page(19, "Desk organizer", html_file)
     #result = get_avg_selling_price(19, "Desk organizer")
     #result = get_number_of_orders(19, "Desk organizer")
     #result = get_average_product_rating(19, "Desk organizer")
     #result = get_search_three_month_growth(19, "Desk organizer")
     #result = get_number_of_competitors_from_page(19, "Desk organizer", html_file)
     #result = get_number_of_competitors(19, "Desk organizer")
-    result = get_avg_product_cost_from_page(19, "Desk organizer", alibaba_html_file)
+    #result = get_avg_product_cost_from_page(19, "Desk organizer", alibaba_html_file)
+    product_cost = get_avg_product_cost(19, "Desk organizer")
+    result = get_avg_margin_from_page(19, "Desk organizer", selling_prices["prices"], product_cost["avg_product_cost"])
     print(result)
