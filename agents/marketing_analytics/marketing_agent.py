@@ -4,6 +4,18 @@ from src.logger import get_logger
 
 logger = get_logger(__name__)
 
+#SHOPEE ADS DATA COLUMNS : 
+#Index(['User Name', 'Shop Name', 'Shop ID', 'Report Creation Time',
+#       'Date Period', 'Sequence', 'Ad Name', 'Status', 'Ads Type',
+#       'Product ID', 'Creative', 'Bidding Method', 'Placement', 'Start Date',
+#       'End Date', 'Impression', 'Clicks', 'CTR', 'Add to Cart',
+#       'Add to Cart Rate', 'Conversions', 'Direct Conversions',
+#       'Conversion Rate', 'Direct Conversion Rate', 'Cost per Conversion',
+#       'Cost per Direct Conversion', 'Items Sold', 'Direct Items Sold', 'GMV',
+#       'Direct GMV', 'Expense', 'ROAS', 'Direct ROAS', 'ACOS', 'Direct ACOS',
+#       'Product Impressions', 'Product Clicks', 'Product CTR',
+#       'Voucher Amount', 'Vouchered Sales']
+
 class marketingAgent:
     def __init__(self):
         pass
