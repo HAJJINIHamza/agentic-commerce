@@ -41,15 +41,15 @@ class ProductSellingPriceAgent:
         Compute the fixed cost of the product
         """
         product_cost = self.data.loc[self.data["id"] == product_id, "product_cost"].values[0]
-        shipping_cost = self.data.loc[self.data["id"] == product_id, "shipping_cost"].values[0]
+        #shipping_cost = self.data.loc[self.data["id"] == product_id, "shipping_cost"].values[0]
         packaging_cost = self.data.loc[self.data["id"] == product_id, "packaging_cost"].values[0]
         #international_shipping_cost = self.data.loc[self.data["id"] == product_id, "international_shipping_cost"].values[0]
-        platform_fees = self.data.loc[self.data["id"] == product_id, "platform_fees"].values[0]
+        #platform_fees = self.data.loc[self.data["id"] == product_id, "platform_fees"].values[0]
         advertising_cost = self.data.loc[self.data["id"] == product_id, "advertising_cost"].values[0]
-        payment_fees = self.data.loc[self.data["id"] == product_id, "payment_fees"].values[0]
+        #payment_fees = self.data.loc[self.data["id"] == product_id, "payment_fees"].values[0]
 
         fixed_cost = ( product_cost
-                        + shipping_cost
+                        #+ shipping_cost
                         + packaging_cost
                         + advertising_cost                        
                         #+ international_shipping_cost
@@ -60,12 +60,12 @@ class ProductSellingPriceAgent:
         self.product_selling_dict["fixed_cost"] = fixed_cost
         self.product_selling_dict["fixed_cost_components"] = {
             "product_cost": product_cost,
-            "shipping_cost": shipping_cost,
+            #"shipping_cost": shipping_cost,
             "packaging_cost": packaging_cost,
             #"international_shipping_cost": international_shipping_cost,
-            "platform_fees": platform_fees,
+            #"platform_fees": platform_fees,
             "advertising_cost": advertising_cost,
-            "payment_fees": payment_fees
+            #"payment_fees": payment_fees
         }
         
         return fixed_cost
@@ -74,29 +74,29 @@ class ProductSellingPriceAgent:
         """
         Compute the total rate of the product
         """
-        commission_rate = self.data.loc[self.data["id"] == product_id, "commission_rate"].values[0]
-        transaction_fee_rate = self.data.loc[self.data["id"] == product_id, "transaction_fee_rate"].values[0]
+        #commission_rate = self.data.loc[self.data["id"] == product_id, "commission_rate"].values[0]
+        #transaction_fee_rate = self.data.loc[self.data["id"] == product_id, "transaction_fee_rate"].values[0]
         payoneer_fee_rate = self.data.loc[self.data["id"] == product_id, "payoneer_fee_rate"].values[0]
-        service_fee_rate = self.data.loc[self.data["id"] == product_id, "service_fee_rate"].values[0]
-        ad_cost_rate = self.data.loc[self.data["id"] == product_id, "ad_cost_rate"].values[0]
-        target_margin_rate = self.data.loc[self.data["id"] == product_id, "target_margin_rate"].values[0]
+        #service_fee_rate = self.data.loc[self.data["id"] == product_id, "service_fee_rate"].values[0]
+        #ad_cost_rate = self.data.loc[self.data["id"] == product_id, "ad_cost_rate"].values[0]
+        #target_margin_rate = self.data.loc[self.data["id"] == product_id, "target_margin_rate"].values[0]
 
-        total_rate = (commission_rate 
-                    + transaction_fee_rate 
+        total_rate = (#commission_rate 
+                    #+ transaction_fee_rate 
                     + payoneer_fee_rate 
-                    + service_fee_rate 
+                    #+ service_fee_rate 
                     #+ ad_cost_rate 
                     #+ target_margin_rate 
                     )
         
         self.product_selling_dict["total_rate"] = total_rate
         self.product_selling_dict["total_rate_components"] = {
-            "commission_rate": commission_rate,
-            "transaction_fee_rate": transaction_fee_rate,
+            #"commission_rate": commission_rate,
+            #"transaction_fee_rate": transaction_fee_rate,
             "payoneer_fee_rate": payoneer_fee_rate,
-            "service_fee_rate": service_fee_rate,
-            "ad_cost_rate": ad_cost_rate,
-            "target_margin_rate": target_margin_rate
+            #"service_fee_rate": service_fee_rate,
+            #"ad_cost_rate": ad_cost_rate,
+            #"target_margin_rate": target_margin_rate
         }
         if total_rate >= 1:
             logger.info("Total rate is 1 or more, impossible to make profit from this product.")
