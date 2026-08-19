@@ -222,6 +222,8 @@ if file_path:
     #
     # ----------------------------------------------------
 
+    st.subheader("Day by day analytics :")
+
     start_day = st.number_input(
         label = "Start day",
         min_value = 1,
@@ -233,88 +235,90 @@ if file_path:
         max_value = 31,
     )
 
-    if end_day < start_day:
-        st.error("Invalid date range: End day must be greater than or equal to Start day.")
+    if st.button("Visualize"):
 
-    else :
-        shopee_day_by_day_data = marketing_agent.process_day_by_day_data(start_day, end_day)
+        if end_day < start_day:
+            st.error("Invalid date range: End day must be greater than or equal to Start day.")
 
-        fig_1 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="Impression", 
-                markers=True, 
-                title="Impression per day", 
-                height=400, 
-                width=1000,
-                    )
-        #fig_1.update_traces(line_color="crimson")
-        st.plotly_chart(fig_1, use_container_width = True)
+        else :
+            shopee_day_by_day_data = marketing_agent.process_day_by_day_data(start_day, end_day)
 
-        fig_2 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="Clicks", 
-                markers=True, 
-                title="Clicks per day", 
-                height=400, 
-                width=1000,
-                    )
-        fig_2.update_traces(line_color="crimson")
-        st.plotly_chart(fig_2, use_container_width = True)
+            fig_1 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="Impression", 
+                    markers=True, 
+                    title="Impression per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            #fig_1.update_traces(line_color="crimson")
+            st.plotly_chart(fig_1, use_container_width = True)
 
-        fig_3 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="ctr_%", 
-                markers=True, 
-                title="CTR % per day", 
-                height=400, 
-                width=1000,
-                    )
-        fig_3.update_traces(line_color="green")
-        st.plotly_chart(fig_3, use_container_width = True)
+            fig_2 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="Clicks", 
+                    markers=True, 
+                    title="Clicks per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            fig_2.update_traces(line_color="crimson")
+            st.plotly_chart(fig_2, use_container_width = True)
 
-        fig_4 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="Conversions", 
-                markers=True, 
-                title="Conversions per day", 
-                height=400, 
-                width=1000,
-                    )
-        fig_4.update_traces(line_color="royalblue")
-        st.plotly_chart(fig_4, use_container_width = True)
+            fig_3 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="ctr_%", 
+                    markers=True, 
+                    title="CTR % per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            fig_3.update_traces(line_color="green")
+            st.plotly_chart(fig_3, use_container_width = True)
 
-        fig_5 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="number_of_impressions_needed", 
-                markers=True, 
-                title="Number of impression needed for 1 click per day", 
-                height=400, 
-                width=1000,
-                    )
-        #fig_5.update_traces(line_color="royalblue")
-        st.plotly_chart(fig_5, use_container_width = True)
+            fig_4 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="Conversions", 
+                    markers=True, 
+                    title="Conversions per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            fig_4.update_traces(line_color="royalblue")
+            st.plotly_chart(fig_4, use_container_width = True)
 
-        fig_6 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="cpc_$", 
-                markers=True, 
-                title="CPC $ per day", 
-                height=400, 
-                width=1000,
-                    )
-        fig_6.update_traces(line_color="crimson")
-        st.plotly_chart(fig_6, use_container_width = True)
+            fig_5 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="number_of_impressions_needed", 
+                    markers=True, 
+                    title="Number of impression needed for 1 click per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            #fig_5.update_traces(line_color="royalblue")
+            st.plotly_chart(fig_5, use_container_width = True)
 
-        fig_7 = px.line(shopee_day_by_day_data, 
-                x="start_date", 
-                y="Expense", 
-                markers=True, 
-                title="Expense $ per day", 
-                height=400, 
-                width=1000,
-                    )
-        fig_7.update_traces(line_color="forestgreen")
-        st.plotly_chart(fig_7, use_container_width = True)
+            fig_6 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="cpc_$", 
+                    markers=True, 
+                    title="CPC $ per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            fig_6.update_traces(line_color="crimson")
+            st.plotly_chart(fig_6, use_container_width = True)
+
+            fig_7 = px.line(shopee_day_by_day_data, 
+                    x="start_date", 
+                    y="Expense", 
+                    markers=True, 
+                    title="Expense $ per day", 
+                    height=400, 
+                    width=1000,
+                        )
+            fig_7.update_traces(line_color="forestgreen")
+            st.plotly_chart(fig_7, use_container_width = True)
 
 
 

@@ -160,7 +160,7 @@ class marketingAgent:
         return overall_data
 
 
-
+"""
 if __name__ == "__main__":
     file_path = "data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-05_08_2026-12_08_2026.csv"
     marketing_agent = marketingAgent()
@@ -169,5 +169,5 @@ if __name__ == "__main__":
     #marketing_metrics = marketing_agent.compute_marketing_metrics(shopee_ads_data)
     overall_data = marketing_agent.process_day_by_day_data(5, 12)
     print (overall_data)
-
+"""
 
