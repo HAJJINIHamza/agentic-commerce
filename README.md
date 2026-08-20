@@ -7,3 +7,15 @@ and monitor commerce performance to improve decision making.
 
 ### Tools
 Python 3.12.3
+
+### Project screens
+
+#### Product selection agent - Product scoring dashboard
+
+#### Dynamic pricing agent - Pricing dashboard
+
+#### Marketing Agent - Marketing analytics dashboard
+
+![marketing dashboard](documentation/project_screenshots/marketing_dashboard_screen_1_20-18-2026.png)
+![marketing dashboard](documentation/project_screenshots/marketing_dashboard_screen_2_20-18-2026.png)
+![marketing dashboard](documentation/project_screenshots/marketing_dashboard_screen_3_20-18-2026.png)
