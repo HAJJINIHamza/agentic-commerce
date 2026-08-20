@@ -6,6 +6,7 @@ import plotly.express as px
 from agents.marketing_analytics.marketing_agent import marketingAgent
 from src.logger import get_logger
 from src.ui.marketing_metrics import metric_card, metric_section
+from datetime import date
 
 logger = get_logger(__name__)
 
@@ -224,24 +225,26 @@ if file_path:
 
     st.subheader("Day by day analytics :")
 
-    start_day = st.number_input(
-        label = "Start day",
-        min_value = 1,
-        max_value = 31,
+    start_date = st.date_input(
+        "Start date",
+        value=date(2026, 8, 5),
+        format="DD-MM-YYYY"
     )
-    end_day = st.number_input(
-        label = "End day",
-        min_value = 1,
-        max_value = 31,
+    end_date = st.date_input(
+        label = "End date",
+        value = date(2026, 8, 12),
+        format = "DD-MM-YYYY",
     )
 
     if st.button("Visualize"):
 
-        if end_day < start_day:
+        if end_date < start_date:
             st.error("Invalid date range: End day must be greater than or equal to Start day.")
 
         else :
-            shopee_day_by_day_data = marketing_agent.process_day_by_day_data(start_day, end_day)
+            print ("End date :", end_date)
+            print ("Start date :", start_date)
+            shopee_day_by_day_data = marketing_agent.process_day_by_day_data(start_date, end_date)
 
             fig_1 = px.line(shopee_day_by_day_data, 
                     x="start_date", 
@@ -251,6 +254,7 @@ if file_path:
                     height=400, 
                     width=1000,
                         )
+            
             #fig_1.update_traces(line_color="crimson")
             st.plotly_chart(fig_1, use_container_width = True)
 

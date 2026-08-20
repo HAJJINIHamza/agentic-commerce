@@ -70,12 +70,12 @@ class marketingAgent:
         marketing_metrics = {
                 #"date_period" : data["Date Period"].values[0],
                 #"ad_name": data["Ad Name"].values[0],
-                "ctr_%": ctr,
-                "cpc_$": cpc,
-                "conversion_rate_%": conversion_rate,
-                "roas_$": roas,
-                "number_of_impressions_needed": number_of_impressions_needed,
-                "number_of_clicks_needed": number_of_clicks_needed
+                "ctr_%": round(ctr, 2),
+                "cpc_$": round(cpc, 2),
+                "conversion_rate_%": round(conversion_rate, 2),
+                "roas_$": round(roas,2),
+                "number_of_impressions_needed": round(number_of_impressions_needed),
+                "number_of_clicks_needed": round(number_of_clicks_needed)
                 }
         
         return marketing_metrics
@@ -127,23 +127,52 @@ class marketingAgent:
 
         return data
 
-    def process_day_by_day_data(self, start_day = 5, end_day=13):
+    def format_date_to_dd_mm_yyyy(self, date_string: str) -> str:
+        """
+        Convert a date string to the format: dd_mm_yyyy.
+        """
+        print ("In format date to dd_mm_yyyy")
+        print ("Start date is :", date_string)
+        if not isinstance(date_string, str) or not date_string.strip():
+            raise ValueError("date_string must be a non-empty string")
+
+        date_value = pd.to_datetime(
+            date_string.strip(),
+            dayfirst=True,
+            errors="raise"
+        )
+
+        return date_value.strftime("%d_%m_%Y")
+
+    def process_day_by_day_data(self, start_date = "05-08-2026", end_date= "13-08-2026"):
         """
         Process Shopee Ads data to create a day-by-day DataFrame
 
         Params:
         ------
-        start_day : 5, 9, 12, ...
-        end_day : 5, 9, 12, ...
+        start_date : 18-08-2026 ...
+        end_date : 20/08/2026 ...
 
         """
-        end_day_data_path = Path(f"data/marketing/shopee_ads/day_by_data_data/Shopee-Ads-Overall-Data-{end_day:02d}_08_2026-{end_day:02d}_08_2026.csv")
+        #start_date = self.format_date_to_dd_mm_yyyy(start_date)
+        #end_date = self.format_date_to_dd_mm_yyyy(end_date)
+
+        try : 
+            _ = start_date.strftime("%d_%m_%Y")
+            _ = end_date.strftime("%d_%m_%Y")
+
+        except Exception as e:
+            raise ValueError(f"Start date or End date format is incorrect. start_date : {start_date}, end_date : {end_date}. Error : {e}")
+        
+        end_day_data_path = Path(f"data/marketing/shopee_ads/day_by_data_data/Shopee-Ads-Overall-Data-{end_date.strftime("%d_%m_%Y")}-{end_date.strftime("%d_%m_%Y")}.csv")
+
         if not end_day_data_path.exists():
-            raise ValueError(f"File {end_day_data_path} doesn's exist, End day {end_day} is out of range.")
+            raise ValueError(f"File {end_day_data_path} doesn's exist, End day {end_date} is out of range.")
 
         overall_data = []
-        for day in range(start_day, end_day + 1):
-            file_path = f"data/marketing/shopee_ads/day_by_data_data/Shopee-Ads-Overall-Data-{day:02d}_08_2026-{day:02d}_08_2026.csv"
+        for date in pd.date_range(start_date, end_date, freq="D"):
+            date = date.strftime("%d_%m_%Y")
+            file_path = f"data/marketing/shopee_ads/day_by_data_data/Shopee-Ads-Overall-Data-{date}-{date}.csv"
             day_data = self.read_shopee_ads_data(file_path)
             day_data = day_data[day_data.index == 0]
             overall_data.append(day_data)
