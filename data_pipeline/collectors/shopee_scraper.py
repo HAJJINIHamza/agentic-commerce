@@ -8,7 +8,7 @@ from src.logger import get_logger
 
 logger = get_logger(__name__)
 
-def extract_avg_selling_price_from_page(id, product_name, html_file):
+def get_avg_selling_price_from_page(id, product_name, html_file):
     """
     Extract product prices from a Shopee search-results HTML file.
 
@@ -595,12 +595,13 @@ def get_avg_margin_from_page(id, product_name,selling_prices, product_cost):
 
 #test
 if __name__ == "__main__":
-    html_file = "data/scrapping/html_pages/19/selling_price_pages/product_19_shopee_page_1.html"
+    #html_file = "data/scrapping/html_pages/19/selling_price_pages/product_19_shopee_page_1.html"
+    html_file = "data/scrapping/html_pages/7/shopee_selling_price_pages/product_7_shopee_page_1.html"
     alibaba_html_file = "data/scrapping/html_pages/19/alibaba_pages/product_19_alibaba_page_1.html"
     #result = extract_avg_selling_price_from_page(1213, "Desk organizer", html_file)
     #result = extract_number_of_orders_from_page(1213, "Desk organizer", html_file)
     #result = extract_average_product_rating_from_page(1213, "Desk organizer", html_file)
-    selling_prices = extract_avg_selling_price_from_page(19, "Desk organizer", html_file)
+    selling_prices = extract_avg_selling_price_from_page(7, "Sheet Mask", html_file)
     #result = get_avg_selling_price(19, "Desk organizer")
     #result = get_number_of_orders(19, "Desk organizer")
     #result = get_average_product_rating(19, "Desk organizer")
@@ -608,6 +609,6 @@ if __name__ == "__main__":
     #result = get_number_of_competitors_from_page(19, "Desk organizer", html_file)
     #result = get_number_of_competitors(19, "Desk organizer")
     #result = get_avg_product_cost_from_page(19, "Desk organizer", alibaba_html_file)
-    product_cost = get_avg_product_cost(19, "Desk organizer")
-    result = get_avg_margin_from_page(19, "Desk organizer", selling_prices["prices"], product_cost["avg_product_cost"])
-    print(result)
+    #product_cost = get_avg_product_cost(19, "Desk organizer")
+    #result = get_avg_margin_from_page(19, "Desk organizer", selling_prices["prices"], product_cost["avg_product_cost"])
+    print(selling_prices)
