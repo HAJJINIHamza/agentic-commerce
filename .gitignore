@@ -221,7 +221,7 @@ __marimo__/
 data/scrapping/
 
 #notebooks
-notebooks/
+notebooks/test_notebooks
 
 #Models
 models/
