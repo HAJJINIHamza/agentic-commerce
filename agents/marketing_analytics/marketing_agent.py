@@ -126,11 +126,12 @@ class marketingAgent:
         logger.info("Added new marketing metrics to data")
 
         return data
+    """
 
     def format_date_to_dd_mm_yyyy(self, date_string: str) -> str:
-        """
+        "
         Convert a date string to the format: dd_mm_yyyy.
-        """
+        "
         print ("In format date to dd_mm_yyyy")
         print ("Start date is :", date_string)
         if not isinstance(date_string, str) or not date_string.strip():
@@ -143,6 +144,7 @@ class marketingAgent:
         )
 
         return date_value.strftime("%d_%m_%Y")
+    """    
 
     def process_day_by_day_data(self, start_date = "05-08-2026", end_date= "13-08-2026"):
         """
