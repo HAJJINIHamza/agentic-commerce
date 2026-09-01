@@ -593,6 +593,7 @@ def get_avg_margin_from_page(id, product_name,selling_prices, product_cost):
         "margins": margins,
         "avg_margin": round(sum(margins) / len(margins), 2) if margins else None}
 
+
 #test
 if __name__ == "__main__":
     #html_file = "data/scrapping/html_pages/19/selling_price_pages/product_19_shopee_page_1.html"
