@@ -228,3 +228,8 @@ models/
 
 #ressources
 ressources/images
+
+#files
+.~lock.*
+*.lock
+*.ods
