@@ -4,7 +4,7 @@ import time
 import random
 import os 
 from dotenv import load_dotenv
-from data_pipeline.collectors.shopee_listings_scrapper import get_product_titles_from_page
+from data_pipeline.collectors.shopee_listings_scrapper import get_product_titles_from_page, get_product_description_from_all_pages
 
 from src.logger import get_logger
 
@@ -28,6 +28,14 @@ class listingGenerationAgent:
         model_id: str = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
         max_retries: int = 5
     ):
+        """
+        Get a completion from the specified model using the OpenRouter API.
+        
+        Returns:
+            content: The generated text from the model.
+            reasoning_details: Additional reasoning details provided by the model.
+        """
+
         logger.info(f"Calling model {model_id}")
 
         url = "https://openrouter.ai/api/v1/chat/completions"
@@ -129,14 +137,18 @@ class listingGenerationAgent:
         with open("agents/prompts/title_generation_prompt.txt", "r") as prompt_file:
             title_generation_prompt = prompt_file.read()
 
+        with open("agents/prompts/description_generation_prompt.txt", "r") as prompt_file:
+            description_generation_prompt = prompt_file.read()
+
         #with open("agents/prompts/listing_generation_prompt.txt", "r") as prompt_file:
-            listing_generation_prompt = prompt_file.read()
+            #listing_generation_prompt = prompt_file.read()
 
         #with open("agents/prompts/tiktok_listing_prompt.txt", "r") as prompt_file:
-            tiktok_listing_prompt = prompt_file.read()
+            #tiktok_listing_prompt = prompt_file.read()
 
         #return ,listing_generation_prompt, tiktok_listing_prompt
-        return title_generation_prompt
+        return {"title_generation_prompt": title_generation_prompt, 
+                "description_generation_prompt": description_generation_prompt}
 
     def build_listing_generation_prompt(self,
                                         prompt: str,
@@ -168,6 +180,19 @@ class listingGenerationAgent:
             product_category = product_category,
             product_details = product_details,
             list_of_titles = list_of_titles,
+        )
+
+    def build_description_generation_prompt(self,
+                                            prompt: str,
+                                            product_name: str,
+                                            product_category: str,
+                                            product_details: str,
+                                            list_of_descriptions: list[str]):
+        return prompt.format(
+            product_name = product_name,
+            product_category = product_category,
+            product_details = product_details,
+            list_of_descriptions = list_of_descriptions,
         )
 
     #############################################################################################################################
@@ -236,7 +261,7 @@ class listingGenerationAgent:
                                product_category,
                                product_details):
         """
-        Generate product title based on details
+        Generate product title based on product details and competitor titles
         """
         
         product_titles_dict = get_product_titles_from_page(product_id, product_name)
@@ -246,7 +271,8 @@ class listingGenerationAgent:
             logger.info("No competitor titles found, using product name as title")
             list_of_titles = [product_name]
 
-        title_generation_prompt = self.get_predifined_prompts()
+        predifined_prompts = self.get_predifined_prompts()
+        title_generation_prompt = predifined_prompts["title_generation_prompt"]
         title_generation_prompt = self.build_title_generation_prompt(title_generation_prompt,
                                                                     product_name,
                                                                     product_category,
@@ -267,11 +293,47 @@ class listingGenerationAgent:
         logger.info(f"title : {title}")
         return title
 
-    #def generate_product_description(self,)
+    def generate_product_description(self,
+                                     product_id,
+                                     product_name,
+                                     product_category,
+                                     product_details):
+        """
+        Generate product description based on product details and competitor descriptions
+        """
+
+        product_descriptions_dict = get_product_description_from_all_pages(product_id, product_name)
+        list_of_descriptions = product_descriptions_dict.get("descriptions", [])
+        if not list_of_descriptions:
+            logger.info("No competitor descriptions found, using product details as description")
+            list_of_descriptions = [product_details]
+
+        #description_generation_prompt
+        description_generation_prompt = self.get_predifined_prompts()["description_generation_prompt"]
+        description_prompt = self.build_description_generation_prompt(description_generation_prompt,
+                                                product_name,
+                                                product_category,
+                                                product_details,
+                                                list_of_descriptions)
+
+        product_description, _ = self.get_completion_from_model(description_prompt)
+        try:
+            product_description = product_description.replace("```json", "").replace("```", "").strip()
+            product_description = json.loads(product_description)
+        except:
+            logger.info("Failed to get a valid json product_description response from model")
+            raise ValueError("Couldn't get a valid json product_description response from model")
+
+        logger.info("Successfully generated product description")
+        logger.info(f"product_description : {product_description}")
+        return product_description
 
 
 
-        
+
+
+
+
 
 
         
