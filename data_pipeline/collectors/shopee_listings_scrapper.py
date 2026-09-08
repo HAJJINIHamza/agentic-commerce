@@ -196,7 +196,7 @@ def get_product_description_from_all_pages(product_id, product_name):
         "descriptions": descriptions
     }
 
-
+#TODO: Think about scrapping images from product description.
 
 if __name__ == "__main__":
     #result = get_product_titles_from_page("7", "Sheet_mask")
