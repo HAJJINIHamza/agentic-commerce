@@ -19,3 +19,14 @@ Python 3.12.3
 ![marketing dashboard](documentation/project_screenshots/marketing_dashboard_screen_1_20-18-2026.png)
 ![marketing dashboard](documentation/project_screenshots/marketing_dashboard_screen_2_20-18-2026.png)
 ![marketing dashboard](documentation/project_screenshots/marketing_dashboard_screen_3_20-18-2026.png)
+
+#### Listing Dashboard
+![listing dashboard](documentation/project_screenshots/listing_dashboard_1.png)
+
+![listing dashboard](documentation/project_screenshots/listing_dashboard_2.png)
+
+![listing dashboard](documentation/project_screenshots/listing_dashboard_3.png)
+
+![listing dashboard](documentation/project_screenshots/listing_dashboard_4.png)
+
+![listing dashboard](documentation/project_screenshots/listing_dashboard_5.png)
