@@ -262,6 +262,11 @@ class listingGenerationAgent:
                                product_details):
         """
         Generate product title based on product details and competitor titles
+
+        Output template :
+        {
+        "title": str,
+        }
         """
         
         product_titles_dict = get_product_titles_from_page(product_id, product_name)
@@ -291,7 +296,7 @@ class listingGenerationAgent:
 
         logger.info("Successfully generated title")
         logger.info(f"title : {title}")
-        return title
+        return title, list_of_titles
 
     def generate_product_description(self,
                                      product_id,
@@ -300,6 +305,14 @@ class listingGenerationAgent:
                                      product_details):
         """
         Generate product description based on product details and competitor descriptions
+
+        Returns :
+
+        Output template :
+        {
+        "description": str,
+        "key_words": List[str]
+        }
         """
 
         product_descriptions_dict = get_product_description_from_all_pages(product_id, product_name)
@@ -322,11 +335,12 @@ class listingGenerationAgent:
             product_description = json.loads(product_description)
         except:
             logger.info("Failed to get a valid json product_description response from model")
+            logger.info(f"Got product_description : {product_description}")
             raise ValueError("Couldn't get a valid json product_description response from model")
 
         logger.info("Successfully generated product description")
         logger.info(f"product_description : {product_description}")
-        return product_description
+        return product_description, list_of_descriptions
 
 
 
