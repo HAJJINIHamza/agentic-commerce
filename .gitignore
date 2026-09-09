@@ -218,6 +218,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 #Data
+data/listings/
 data/scrapping/data_tables/
 
 #notebooks
