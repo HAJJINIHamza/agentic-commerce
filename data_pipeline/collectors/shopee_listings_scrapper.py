@@ -200,6 +200,8 @@ def get_product_description_from_all_pages(product_id, product_name):
 
 if __name__ == "__main__":
     #result = get_product_titles_from_page("7", "Sheet_mask")
-    #result = get_product_description_from_page("7", "Sheet_mask", html_file="product_7_shopee_description_page_2.html")
-    result = get_product_description_from_all_pages("7", "Sheet_mask")
+    page_path = "data/scrapping/html_pages/7/shopee_description_pages/product_7_shopee_description_page_3.html"
+    page_path = Path(page_path)
+    result = get_product_description_from_page("7", "Sheet_mask", html_file=page_path)
+    #result = get_product_description_from_all_pages("7", "Sheet_mask")
     print (result)

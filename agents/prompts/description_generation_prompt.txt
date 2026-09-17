@@ -28,5 +28,7 @@ Avoid unsafe claims in the description and key words like:
     - medical effect 
     - guaranteed result 
 
+Structure the description into sections and bullet points.
+
 Generate the output in json format in english.
 Ouput the json text and nothing else.

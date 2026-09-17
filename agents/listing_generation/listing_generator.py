@@ -344,6 +344,11 @@ class listingGenerationAgent:
 
 
 
+### TODO : Llisting improvement:
+# Listing Agent include terms used by suppliers for whosallers, shoud be avoided
+# Listing Agent sometimes generate an unorgnized description, should take care of that.
+
+
 
 
 

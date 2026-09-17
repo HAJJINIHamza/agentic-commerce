@@ -29,7 +29,7 @@ if st.session_state.manual_mode:
         product_id = st.text_input("Product id")
         product_name = st.text_input("Product name")
         product_category = st.text_input("Product category")
-        product_details = st.text_input("Product details")
+        product_details = st.text_area("Product details", height=200)
 
         submit_form = st.form_submit_button("Generate")
 
