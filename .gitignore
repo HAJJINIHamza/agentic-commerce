@@ -218,4 +218,19 @@ __marimo__/
 .streamlit/secrets.toml
 
 #Data
-data/
+data/listings/
+data/scrapping/data_tables/
+
+#notebooks
+notebooks/test_notebooks
+
+#Models
+models/
+
+#ressources
+ressources/images
+
+#files
+.~lock.*
+*.lock
+*.ods

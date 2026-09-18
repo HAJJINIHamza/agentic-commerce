@@ -6,6 +6,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from src.utils import save_csv_file
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -22,12 +24,13 @@ uploaded_file = st.file_uploader("Upload products (csv)", type=["csv"])
 if uploaded_file: 
     print("Reading file...")
     product_data = pd.read_csv(uploaded_file, sep=";", encoding_errors="ignore")
+    print (product_data)
 
     df = {  "product_id": [],
             "product_name": [],
             "product_category": [],
             "product_score": [],
-            "demand_growth": [],
+            "demand_strength": [],
             "low_competition_score": [],
             "expected_margin": [],
             "logistics_simplicity": [],
@@ -37,7 +40,8 @@ if uploaded_file:
             "classification": [],
             "classification_reason": []
         }
-
+    print ("Columns : ", product_data.columns)
+    print (" IDs : ", product_data["id"].values)
     for product_id in product_data["id"].values:
         product_scoring_agent = ProductScoringAgent(product_data)
         product_score, score_components = product_scoring_agent.score_product(product_id)
@@ -47,7 +51,7 @@ if uploaded_file:
         df["product_category"].append(product_data.loc[product_data["id"] == product_id, 
                                                        "product_category"].iloc[0].strip())
         df["product_score"].append(product_score)
-        df["demand_growth"].append(score_components["demand_growth"])
+        df["demand_strength"].append(score_components["demand_strength"])
         df["low_competition_score"].append(score_components["low_competition_score"])
         df["expected_margin"].append(score_components["expected_margin"])
         df["logistics_simplicity"].append(score_components["logistics_simplicity"])
@@ -59,11 +63,12 @@ if uploaded_file:
 
     df = pd.DataFrame(df)
     df.sort_values(by="product_score", ascending=False, inplace=True)
+    save_csv_file(df, "product_scores", "data/product_scoring/product_scores/")
 
     st.dataframe(df) 
  
     top_product = df.iloc[0] 
-    score_component_names = ["demand_growth", 
+    score_component_names = ["demand_strength", 
                             "low_competition_score", 
                             "expected_margin", 
                             "logistics_simplicity", 

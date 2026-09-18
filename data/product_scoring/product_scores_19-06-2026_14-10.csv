@@ -1,0 +1,2 @@
+product_id,product_name,product_category,product_score,demand_growth,low_competition_score,expected_margin,logistics_simplicity,supplier_reliability,tiktok_virality,compliance_safety,classification,classification_reason
+16,Product 16,Electronics,,0.9750000000000001,,0.9972189349112426,,,0.6802630520492896,0.19999999999999996,Great product,Product has an excellent score

@@ -8,7 +8,6 @@ logger = get_logger(__name__)
 #This data is level 3 product information 
 #Neet to go level 3 -> level 2 then level 2 -> level 1.
 
-#TODO : you should add Try Except to all fuctions
 #TODO : Add DataFrame savings at each level
 #TODO : ADD unit tests
 
@@ -30,8 +29,10 @@ class ProductScoringAgent:
         """
 
         print ("Scoring product")
-        demand_growth = self.compute_demand_growth(product_id)
-        logger.info(f"Demand growth for product_id {product_id} is {demand_growth}")
+        #demand_growth = self.compute_demand_growth(product_id)
+        #logger.info(f"Demand growth for product_id {product_id} is {demand_growth}")
+        demand_strength = self.compute_demand_strength(product_id)
+        logger.info(f"Demand Strength for product_id {product_id} is : {demand_strength}")
         low_competition_score = self.compute_competition_score(product_id)
         logger.info(f"Low competition score for product_id {product_id} is {low_competition_score}")
         expected_margin = self.compute_expected_margin(product_id)
@@ -45,7 +46,7 @@ class ProductScoringAgent:
         compliance_safety = self.compute_compliance_safety(product_id)
         logger.info(f"Compliance and safety score for product_id {product_id} is {compliance_safety}")
 
-        product_score = (0.25 * demand_growth 
+        product_score = (0.25 * demand_strength 
                         + 0.2 * low_competition_score 
                         + 0.2 * expected_margin 
                         + 0.1 * logistics_simplicity 
@@ -61,7 +62,7 @@ class ProductScoringAgent:
         
         self.product_score_dict["classification_reason"] = reason
         self.product_score_dict["classification"] = classification
-        self.product_score_dict["demand_growth"] = demand_growth
+        self.product_score_dict["demand_strength"] = demand_strength
         self.product_score_dict["low_competition_score"] = low_competition_score
         self.product_score_dict["expected_margin"] = expected_margin
         self.product_score_dict["logistics_simplicity"] = logistics_simplicity
@@ -73,9 +74,37 @@ class ProductScoringAgent:
         #Reverse dictionary items order 
         self.product_score_dict = dict(reversed(list(self.product_score_dict.items())))
         logger.info(f"product_score_dict : {self.product_score_dict}")
+
         return product_score, self.product_score_dict
 
     # Level 1 metrics
+
+    def compute_demand_strength(self, product_id):
+        """
+        Computes the demand growth for a product
+        """
+        print ("Computing demand growth")
+        order_score = self.compute_order_score(product_id)
+        #search_trend_growth = self.compute_search_trend_growth(product_id)
+        search_trend_growth = self.products_data.loc[self.products_data["id"] == product_id,
+                                                     "search_three_months_growth"].values[0]
+        product_rating_score = self.compute_product_rating_score(product_id)
+        review_score = self.compute_review_score(product_id)
+        
+
+        demand_growth = (0.5 * order_score 
+                        + 0.3 * search_trend_growth
+                        + 0.1 * product_rating_score
+                        + 0.1 * review_score)
+        
+        self.product_score_dict["demand_strength_components"] = {
+            "order_score": order_score,
+            "search_trend_growth": search_trend_growth,
+            "product_rating_score": product_rating_score,
+            "review_score" : review_score
+        }
+
+        return demand_growth
 
     def compute_demand_growth(self, product_id):
         """
@@ -105,16 +134,19 @@ class ProductScoringAgent:
         print("Computing low competition score")
         seller_density_score = self.compute_seller_density_score(product_id)
         review_saturation_score = self.compute_review_saturation_score(product_id)
-        price_war_score = self.compute_price_war_score(product_id)
+        #Price war score isn't going to be used for the first iteration 
+        #Because it requires more data 
+        #price_war_score = self.compute_price_war_score(product_id)
 
-        low_competition_score = (0.5 * seller_density_score 
-                            + 0.3 * review_saturation_score  
-                            + 0.2 * price_war_score)
+        low_competition_score = (0.6 * seller_density_score 
+                            + 0.4 * review_saturation_score
+                            #+ 0.2 * price_war_score
+                            )
         
         self.product_score_dict["low_competition_score_components"] = {
             "seller_density_score": seller_density_score,
             "review_saturation_score": review_saturation_score,
-            "price_war_score": price_war_score
+            #"price_war_score": price_war_score
         }
 
         print (f"low_competition_score is : {low_competition_score}")
@@ -126,7 +158,7 @@ class ProductScoringAgent:
         """
         print("Computing expected margin")
         selling_price = self.products_data.loc[self.products_data["id"] == product_id, 
-                                            "avg_selling_price"].values[0]
+                                            "selling_price"].values[0]
         product_cost = self.products_data.loc[self.products_data["id"] == product_id, 
                                             "product_cost"].values[0]
         shipping_cost = self.products_data.loc[self.products_data["id"] == product_id,    
@@ -165,9 +197,9 @@ class ProductScoringAgent:
         #TODO : Think about adding fragility score later
         #fragility_score = compute_fragility_score(product_id)
 
-        logistics_simplicity_score = (0.4 * delivery_time_score 
-                                    + 0.3 * shipping_cost_score 
-                                    + 0.2 * size_weight_score 
+        logistics_simplicity_score = (0.44 * delivery_time_score 
+                                    + 0.33 * shipping_cost_score 
+                                    + 0.22 * size_weight_score 
                                     )
         
         self.product_score_dict["logistics_simplicity_components"] = {
@@ -187,18 +219,21 @@ class ProductScoringAgent:
         supplier_rating_score = self.compute_supplier_rating_score(product_id)
         moq_score = self.compute_moq_score(product_id)
         supplier_response_rate_score = self.compute_supplier_response_rate_score(product_id)
-        order_volume_score = self.compute_order_volume_score(product_id)
+        #order_volume_score = self.compute_order_volume_score(product_id)
+        delivery_time_score = self.compute_delivery_time_score(product_id)
 
         supplier_reliability_score = (0.3 * supplier_rating_score + 
                                     0.3 * moq_score + 
                                     0.2 * supplier_response_rate_score + 
-                                    0.2 * order_volume_score)
+                                    #0.2 * order_volume_score
+                                    0.2 * delivery_time_score)
         
         self.product_score_dict["supplier_reliability_components"] = {
             "supplier_rating_score": supplier_rating_score,
             "moq_score": moq_score,
             "supplier_response_rate_score": supplier_response_rate_score,
-            "order_volume_score": order_volume_score
+            "delivery_time_score": delivery_time_score
+            #"order_volume_score": order_volume_score
         }
 
         print (f"supplier_reliability_score is : {supplier_reliability_score}")
@@ -209,16 +244,21 @@ class ProductScoringAgent:
         Computes the TikTok virality score for a product
         """
         print ("Computing TikTok virality score")
-        trend_growth_score = self.compute_trend_growth_score(product_id)
-        creator_adoption_score = self.compute_creator_adoption_score(product_id)
+        #trend_growth_score = self.compute_trend_growth_score(product_id)
 
-        tiktok_virality_score = (0.6 * trend_growth_score + 
-                                0.4 * creator_adoption_score)
+        tiktok_posts_score = self.compute_tiktok_posts_score(product_id)
+        tiktok_likes_score = self.compute_tiktok_likes_score(product_id)
+        tiktok_views_score = self.compute_tiktok_views_score(product_id)
+
+        tiktok_virality_score = (0.5 * tiktok_posts_score + 
+                                 0.3 * tiktok_likes_score
+                                + 0.2 * tiktok_views_score)
         
         self.product_score_dict["tiktok_virality_components"] = {
-            "trend_growth_score": trend_growth_score,
-            "creator_adoption_score": creator_adoption_score
-        }
+            "tiktok_posts_score": tiktok_posts_score,
+            "tiktok_likes_score": tiktok_likes_score,
+            "tiktok_views_score": tiktok_views_score
+            }
 
         print (f"tiktok_virality_score is : {tiktok_virality_score}")
         return tiktok_virality_score
@@ -240,6 +280,23 @@ class ProductScoringAgent:
 
 
     #Level 2 metrics 
+    def compute_order_score(self, product_id):
+        """
+        Computes the order score for a product
+        """
+        print ("Computing order score")
+        number_of_orders = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_orders"].values[0]
+        max_number_of_orders = self.products_data["number_of_orders"].max()
+
+        
+        if max_number_of_orders == 0:
+            logger.info(f"[WARNING] max_number_of_orders is null, for product_id : {product_id}. Setting order score to 0")
+
+        order_score = log(number_of_orders + 1)/log(max_number_of_orders + 1)
+
+        print (f"order_score is : {order_score}")
+        return order_score
 
     def compute_order_growth(self, product_id):
         """
@@ -260,7 +317,9 @@ class ProductScoringAgent:
                 return 0
 
         order_growth = (order_this_month - order_last_month) / order_last_month 
-        order_growth = order_growth / (1 + order_growth)
+
+        #To ensure that growth is between 0 and 1
+        order_growth = max(0, min(1, order_growth))    
 
         print (f"order_growth is : {order_growth}")
         return order_growth
@@ -284,10 +343,36 @@ class ProductScoringAgent:
                 return 0
 
         search_trend_growth = (search_this_month - search_last_month) / search_last_month
-        search_trend_growth = search_trend_growth / (1 + search_trend_growth)
+        #To ensure that growth is between 0 and 1
+        search_trend_growth = max(0, min(1, search_trend_growth))    
 
         print (f"search_trend_growth is : {search_trend_growth}")
         return search_trend_growth
+    
+    def compute_product_rating_score (self, product_id):
+        """
+        Computes product rating score
+        """
+        product_rating = self.products_data.loc[self.products_data["id"] == product_id, 
+                                                "product_rating"].values[0]
+        product_rating_score = product_rating / 5
+        print (f"rating score for product : {product_id} is {product_rating_score}")
+
+        return product_rating_score
+    
+    def compute_review_score(self, product_id):
+        """
+        Computes review score
+        """
+        number_of_five_stars_reviews = self.products_data.loc[self.products_data["id"] == product_id, 
+                                                              "number_of_five_stars_reviews"].values[0]
+        max_number_of_five_stars_reviews = self.products_data["number_of_five_stars_reviews"].max()
+
+
+        review_score = log(number_of_five_stars_reviews + 1)/log(max_number_of_five_stars_reviews + 1)
+        print (f"Review score for product_id : {product_id} is {review_score}")
+
+        return review_score
 
     def compute_review_growth(self, product_id):
         """
@@ -308,7 +393,9 @@ class ProductScoringAgent:
                 return 0
             
         review_growth = (reviews_this_month - reviews_last_month) / reviews_last_month
-        review_growth = review_growth / (1 + review_growth)
+
+        #To ensure that growth is between 0 and 1
+        review_growth = max(0, min(1, review_growth))        
 
         print (f"review_growth is : {review_growth}")
         return review_growth
@@ -320,11 +407,13 @@ class ProductScoringAgent:
         print ("Computing seller density score")
         number_of_competitors = self.products_data.loc[self.products_data["id"] == product_id, 
                                                     "number_of_competitors"].values[0]
+        print ("number_of_competitors :", number_of_competitors)
         
-        if number_of_competitors == 0:
-            return 1
-
-        seller_density_score = 1 / log(number_of_competitors + 1)
+        min_num_of_competitors = self.products_data["number_of_competitors"].min()
+        print ("min_num_of_competitors :", min_num_of_competitors)
+        max_num_of_competitors = self.products_data["number_of_competitors"].max()
+        
+        seller_density_score = 1 - (number_of_competitors - min_num_of_competitors)/(max_num_of_competitors - min_num_of_competitors)
 
         print (f"seller_density_score is : {seller_density_score}")
         return seller_density_score
@@ -336,11 +425,16 @@ class ProductScoringAgent:
         print ("Computing review saturation score")
         avg_top_five_compititor_reviews = self.products_data.loc[self.products_data["id"] == product_id, 
                                                             "avg_top_five_competitor_reviews"].values[0]
+        
+        min_avg_top_five_compititor_reviews = self.products_data["avg_top_five_competitor_reviews"].min()
+        max_avg_top_five_compititor_reviews = self.products_data["avg_top_five_competitor_reviews"].max()
 
         if avg_top_five_compititor_reviews == 0:
             return 1
 
-        review_saturation_score = 1 / log(avg_top_five_compititor_reviews + 1)
+        review_saturation_score = 1 - (avg_top_five_compititor_reviews - 
+                                       min_avg_top_five_compititor_reviews) / (max_avg_top_five_compititor_reviews 
+                                                                             - min_avg_top_five_compititor_reviews)
 
         print (f"review_saturation_score is : {review_saturation_score}")
         return review_saturation_score
@@ -359,6 +453,8 @@ class ProductScoringAgent:
             logger.info(f"[WARNING] avg selling price is 0 for product_id {product_id}, this is not normal.")
             return 1
 
+        # PRICE WAR ISN'T GOING TO BE USED FOR THE FIRST ITERATION
+        # TODO: This formula isn't convenient, change it later to : 1 - (stddev(competitor_prices) / avg_competitor_price) 
         price_war_score = avg_margin / avg_selling_price
         
         print (f"price_war_score is : {price_war_score}")
@@ -371,11 +467,10 @@ class ProductScoringAgent:
         print ("Computing delivery time score")
         delivery_time = self.products_data.loc[self.products_data["id"] == product_id, 
                                             "delivery_time"].values[0]
+        min_delivery_time = self.products_data["delivery_time"].min()
+        max_delivery_time = self.products_data["delivery_time"].max()
 
-        if delivery_time == 0:
-            return 1
-
-        delivery_time_score = 1 / log(delivery_time + 1)
+        delivery_time_score = 1 - (delivery_time - min_delivery_time)/(max_delivery_time - min_delivery_time)
         print (f"delivery_time_score is : {delivery_time_score}")
         return delivery_time_score
 
@@ -387,10 +482,11 @@ class ProductScoringAgent:
         shipping_cost = self.products_data.loc[self.products_data["id"] == product_id, 
                                             "shipping_cost"].values[0]
         
-        if shipping_cost == 0:
-            return 1
+        min_shipping_cost = self.products_data["shipping_cost"].min()
+        max_shipping_cost = self.products_data["shipping_cost"].max()
 
-        shipping_cost_score = 1 / log(shipping_cost + 1)
+        shipping_cost_score = 1 - (shipping_cost - min_shipping_cost)/(max_shipping_cost - min_shipping_cost)
+
         print (f"shipping_cost_score is : {shipping_cost_score}")
         return shipping_cost_score
 
@@ -433,6 +529,7 @@ class ProductScoringAgent:
         Computes the supplier rating score for a product
         """
         print ("Computing supplier rating score")
+        #supplier_rating should be between 0 and 5 
         supplier_rating = self.products_data.loc[self.products_data["id"] == product_id, 
                                             "supplier_rating"].values[0]
 
@@ -447,11 +544,14 @@ class ProductScoringAgent:
         print ("Computing MOQ score")
         moq = self.products_data.loc[self.products_data["id"] == product_id, 
                                     "moq"].values[0]
+        min_moq = self.products_data["moq"].min()
+        max_moq = self.products_data["moq"].max()
+
         if moq <= 1:
             logger.info(f"Supplier MOQ is {moq}. This is perfect but rare.")
             return 1 
 
-        moq_score = 1 / log(moq + 1)
+        moq_score = 1 - (moq - min_moq) / (max_moq - min_moq)
         print (f"moq_score is : {moq_score}")
         return moq_score
 
@@ -460,6 +560,7 @@ class ProductScoringAgent:
         Computes the supplier response rate score for a product
         """
         print ("Computing supplier response rate score")
+        #Response rate should be a percentage
         response_rate = self.products_data.loc[self.products_data["id"] == product_id, 
                                             "supplier_response_rate"].values[0]
         supplier_response_rate_score = response_rate / 100
@@ -486,6 +587,57 @@ class ProductScoringAgent:
 
         print (f"order volume score is : {order_volume_score}")
         return order_volume_score
+    
+    def compute_tiktok_posts_score(self, product_id):
+        """
+        Computes tiktok posts score
+        """
+
+        number_of_posts = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_hashtag_mentions"].values[0]
+        max_number_of_posts = self.products_data["number_of_hashtag_mentions"].max()
+
+        if max_number_of_posts == 0:
+            logger.info(f"Maximum number of posts is null, this isn't normal")
+            raise ValueError("Maximum number of posts can't be null")
+        
+        tiktok_posts_score = log(number_of_posts + 1) / log(max_number_of_posts + 1)
+        
+        return tiktok_posts_score
+        
+    def compute_tiktok_likes_score(self, product_id):
+        """
+        Computes tiktok likes score
+        """
+
+        number_of_likes = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_likes"].values[0]
+        max_number_of_likes = self.products_data["number_of_likes"].max()
+
+        if max_number_of_likes == 0:
+            logger.info(f"Maximum number of likes is null, this isn't normal")
+            raise ValueError("Maximum number of likes can't be null")
+        
+        tiktok_likes_score = log(number_of_likes + 1) / log(max_number_of_likes + 1)
+        
+        return tiktok_likes_score
+    
+    def compute_tiktok_views_score(self, product_id):
+        """
+        Computes tiktok views score
+        """
+        number_of_views = self.products_data.loc[self.products_data["id"] == product_id, 
+                                            "number_of_hashtag_views"].values[0]
+        max_number_of_views = self.products_data["number_of_hashtag_views"].max()
+
+        if max_number_of_views == 0:
+            logger.info(f"Maximum number of views is null, this isn't normal")
+            raise ValueError("Maximum number of views can't be null")
+        
+        tiktok_views_score = log(number_of_views + 1) / log(max_number_of_views + 1)
+        
+        return tiktok_views_score
+
 
     def compute_trend_growth_score(self, product_id):
         """
@@ -508,7 +660,9 @@ class ProductScoringAgent:
         trend_growth_score = (current_tiktok_trend_score 
                             - last_month_tiktok_trend_score
                             ) / last_month_tiktok_trend_score
-        trend_growth_score = trend_growth_score / (1 + trend_growth_score)
+        
+        #To ensure that growth is between 0 and 1
+        trend_growth_score = max(0, min(1, trend_growth_score))
 
         print (f"trend_growth_score is : {trend_growth_score}")
 
@@ -520,13 +674,10 @@ class ProductScoringAgent:
         """
         number_of_creators = self.products_data.loc[self.products_data["id"] == product_id, 
                                                 "number_of_creators"].values[0]
-        max_nbr_creators = 1000
+        max_nbr_creators = self.products_data.loc["number_of_creators"].max()
 
-        if number_of_creators >= max_nbr_creators:
-            logger.info("Number of creators surpasses the max, creator adoption is 1")
-            creator_adoption_score = 1
-        else:
-            creator_adoption_score = log(number_of_creators + 1) / log(max_nbr_creators + 1)
+
+        creator_adoption_score = number_of_creators / max_nbr_creators
 
         print (f"number of creators is {number_of_creators}")
         print (f"creator_adoption_score is : {creator_adoption_score}")
@@ -584,7 +735,11 @@ class ProductScoringAgent:
         """
         Classifies the product based on the product score
         """
-        if expected_margin < 0.1:
+        if not product_score:
+            logger.info("[Error] Cannot classify product, no score was given ")
+            return None
+        
+        if expected_margin < 0.05:
             classification = "Reject"
             reason = "Product has very low expected margin"
         
@@ -596,20 +751,22 @@ class ProductScoringAgent:
             classification = "Reject"
             reason = "Product has low compliance and safety score"
 
-        if product_score < 0.4:
+        elif product_score < 0.35:
             classification = "Reject"
             reason = "Product has a low score"
 
-        elif product_score < 0.6:
+        elif product_score < 0.45:
             classification = "Investigate"
             reason = "Product has a medium score, needs further investigation"
 
-        elif product_score < 0.75:
+        elif product_score < 0.6:
             classification = "Test"
-            reason = "Product has a good score, ready for testing on small scale"
+            reason = "Product has a promising score, ready for testing on small scale"
 
         else :
             classification = "Great product"
             reason = "Product has an excellent score"
 
         return classification, reason
+    
+

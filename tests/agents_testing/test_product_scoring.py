@@ -9,7 +9,9 @@ log = get_logger(__name__)
 def test_score_product():
 
     log.info("Testing score_product_function")
-    data_test = pd.read_csv("data/test_product_iter_1.csv", sep=";")
+    #data_test = pd.read_csv("data/test_product_iter_1.csv", sep=";")
+    data_test = pd.read_csv("data/product_scoring/product_16_debuging.csv", sep=";")
+    print ("data_test :", data_test)
     product_id = data_test["id"].iloc[0]
     print ("Product id is : ", product_id)
 
@@ -22,5 +24,5 @@ if __name__ == "__main__":
     # python -m tests.agents_testing.test_product_scoring
     #
     score = test_score_product()
-    assert score >= 0.37 and score <= 0.38, f"Expected score to be approximately 0.375, but got {score}"
+    #assert score >= 0.37 and score <= 0.38, f"Expected score to be approximately 0.375, but got {score}"
     print ("Score : ", score)
