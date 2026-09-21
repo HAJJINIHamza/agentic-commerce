@@ -106,39 +106,42 @@ if st.session_state.manual_mode:
                 recommended_listing_card(', '.join(product_description['key_words']), "Recommended Keywords")
 
                 
-                #try :
-                #    with st.empty():
-                #        st.info("⏳ Evaluating listings, please wait...")
-                #        eval_results = listingEvaluatorAgent().evaluate_listings(product_name,
-                #                                                                product_category,
-                #                                                                forbidden_claims,
-                #                                                                listings["title"],
-                #                                                                listings["keywords"],
-               #                                                                 listings["description"],
-               #                                                                 listings["safe_claims"],
-                #                                                                tiktok_listings["tiktok_hook"],
-                #                                                                tiktok_listings["tiktok_short_video_script"])
-                #        st.empty()
-                #except Exception as e:
-                #    st.error(f"Couldn't use AI judge to evaluate listings. Error : {e}")
+                try :
+                    with st.empty():
+                        st.info("⏳ Evaluating listings, please wait...")
+                        forbidden_claims = ["Medically proven", "Cures skin"]
+                        eval_results = listingEvaluatorAgent().evaluate_listings(product_name,
+                                                                                product_category,
+                                                                                forbidden_claims,
+                                                                                title["title"],
+                                                                                product_description["key_words"],
+                                                                                product_description["description"])
 
-                #Evaluate listings
-                #if eval_results["accepted"] == True:
-                #    st.success("Listings are safe to be pusblished")
-                
-                #elif eval_results["accepted"] == False:
-                #    st.error("Listings have been rejected by AI juge")
-                #    st.info(f"Reason : {eval_results["reason"]}")
+                        st.empty()
+
+                        #Evaluate listings
+                        if eval_results["accepted"] == True:
+                            st.success("Listings are safe to be published")
+                        
+                        elif eval_results["accepted"] == False:
+                            st.error("Listings have been rejected by AI juge")
+                            st.info(f"Reason : {eval_results["reason"]}")
+
+                except Exception as e:
+                    st.error(f"Couldn't use AI judge to evaluate listings. Error : {e}")
+
 
                 listings_dataframe = pd.DataFrame([
                         {
                             "title": title.get("title"),
                             "description": json.dumps(product_description.get("description")),
                             "safe_claims": json.dumps(product_description.get("safe_claims")),
-                            #"accepted": eval_results.get("accepted"),
-                            #"reason": eval_results.get("reason")
+                            "accepted": eval_results.get("accepted"),
+                            "reason": eval_results.get("reason")
                         }
                     ])
                 
                 save_csv_file(listings_dataframe, "listings", "data/listings")
                 st.write ("Saved data")
+
+#TODO: See how can you add real time text streaming.
