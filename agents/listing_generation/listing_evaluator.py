@@ -2,6 +2,7 @@ import os
 import json
 import requests
 from dotenv import load_dotenv
+import yaml
 
 from agents.listing_generation.listing_generator import listingGenerationAgent
 from src.logger import get_logger
@@ -36,7 +37,6 @@ class listingEvaluatorAgent():
     def evaluate_listings(self,
                           product_name, 
                             product_category,
-                            forbidden_claims,
                             title,
                             keywords,
                             description,
@@ -52,6 +52,11 @@ class listingEvaluatorAgent():
         "reason" : string
         }
         """
+        with open("config.yaml", "r") as f:
+            config = yaml.safe_load(f)
+
+        forbidden_claims = config["listing_generation"]["forbidden_claims"]
+
         logger.info("Evaluating generated listings...")
         evaluation_prompt = self.build_evaluation_prompt(product_name, 
                                                         product_category,
@@ -59,6 +64,8 @@ class listingEvaluatorAgent():
                                                         title,
                                                         keywords,
                                                         description)
+
+        
         for i in range(max_attempts+1):
             try : 
         

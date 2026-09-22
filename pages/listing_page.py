@@ -109,7 +109,32 @@ if st.session_state.manual_mode:
                 try :
                     with st.empty():
                         st.info("⏳ Evaluating listings, please wait...")
-                        forbidden_claims = ["Medically proven", "Cures skin"]
+
+                        forbidden_claims = [
+                                            "cures acne",                                  # medicinal claim
+                                            "treats eczema / psoriasis / rosacea",         # medicinal claim
+                                            "prevents or reduces disease",                 # medicinal claim
+                                            "diagnoses skin conditions",                   # medicinal claim
+                                            "FDA approved",                                # false regulatory endorsement
+                                            "HSA approved",                                # false regulatory endorsement
+                                            "clinically proven",                           # unsubstantiated efficacy
+                                            "dermatologist recommended",                   # unsubstantiated endorsement
+                                            "100% effective",                              # absolute/guaranteed result
+                                            "guaranteed results",                          # absolute/guaranteed result
+                                            "permanently removes",                         # absolute/guaranteed result
+                                            "no side effects",                             # absolute safety claim
+                                            "100% safe for all skin types",                # absolute safety claim
+                                            "results in 3 days",                           # unverifiable time-bound claim
+                                            "best in Singapore / #1 in the market",        # unsubstantiable superlative
+                                            "lose 10kg in 7 days",                         # weight-loss claim
+                                            "reverses ageing / removes wrinkles permanently",  # absolute efficacy claim
+                                            "chemical-free / 100% natural",                # false composition claim
+                                            "no returns / no refunds",                     # misleading no-return policy
+                                            "Shopee guarantees / a cancellation fee applies",  # misrepresenting platform policy
+                                            "only 1 left / last day today",                # fake urgency (if untrue)
+                                            "was $99, now $9",                             # misleading discount (if never sold at $99)
+                                        ]
+                        
                         eval_results = listingEvaluatorAgent().evaluate_listings(product_name,
                                                                                 product_category,
                                                                                 forbidden_claims,

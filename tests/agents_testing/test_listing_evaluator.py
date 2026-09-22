@@ -3,7 +3,6 @@ from agents.listing_generation.listing_evaluator import listingEvaluatorAgent
 def negative_test_listing_evaluator():
     product_name = "Sheet mask"
     product_category = "K-beauty, Sheet mask"
-    forbidden_claims = ["Cures skin", "Instant results", "Clinically proven"]
     title = "[ARUMVIT] Collagen Moisturizing Sheet Mask – Charcoal Powder 10ppm, 15‑Minute Instant Hydration for All Skin Types, New Arrival Korean Skincare"
     keywords = """[Korean sheet mask, 
             charcoal face mask, 
@@ -33,7 +32,6 @@ def negative_test_listing_evaluator():
     listing_evaluator_agent = listingEvaluatorAgent()
     evaluation_results = listing_evaluator_agent.evaluate_listings(product_name, 
                                                                     product_category,
-                                                                    forbidden_claims,
                                                                     title,
                                                                     keywords,
                                                                     description)

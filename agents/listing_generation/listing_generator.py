@@ -4,8 +4,9 @@ import time
 import random
 import os 
 from dotenv import load_dotenv
-from data_pipeline.collectors.shopee_listings_scrapper import get_product_titles_from_page, get_product_description_from_all_pages
+import yaml
 
+from data_pipeline.collectors.shopee_listings_scrapper import get_product_titles_from_page, get_product_description_from_all_pages
 from src.logger import get_logger
 
 logger = get_logger(__name__)
@@ -187,12 +188,14 @@ class listingGenerationAgent:
                                             product_name: str,
                                             product_category: str,
                                             product_details: str,
-                                            list_of_descriptions: list[str]):
+                                            list_of_descriptions: list[str],
+                                            forbidden_claims : list[str]):
         return prompt.format(
             product_name = product_name,
             product_category = product_category,
             product_details = product_details,
             list_of_descriptions = list_of_descriptions,
+            forbidden_claims = forbidden_claims
         )
 
     #############################################################################################################################
@@ -321,13 +324,19 @@ class listingGenerationAgent:
             logger.info("No competitor descriptions found, using product details as description")
             list_of_descriptions = [product_details]
 
+        with open("config.yaml", "r") as f:
+            config = yaml.safe_load(f)
+
+        forbidden_claims = config["listing_generation"]["forbidden_claims"]
+
         #description_generation_prompt
         description_generation_prompt = self.get_predifined_prompts()["description_generation_prompt"]
         description_prompt = self.build_description_generation_prompt(description_generation_prompt,
                                                 product_name,
                                                 product_category,
                                                 product_details,
-                                                list_of_descriptions)
+                                                list_of_descriptions,
+                                                forbidden_claims)
 
         product_description, _ = self.get_completion_from_model(description_prompt)
         try:
@@ -341,8 +350,6 @@ class listingGenerationAgent:
         logger.info("Successfully generated product description")
         logger.info(f"product_description : {product_description}")
         return product_description, list_of_descriptions
-
-
 
 ### TODO : Llisting improvement:
 # Listing Agent include terms used by suppliers for whosallers, shoud be avoided

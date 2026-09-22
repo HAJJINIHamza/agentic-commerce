@@ -23,10 +23,8 @@ The following descriptions are examples you can use to have an idea, they were e
     - Example descriptions : {list_of_descriptions}
 
 
-Avoid unsafe claims in the description and key words like:
-    - treats disease 
-    - medical effect 
-    - guaranteed result 
+Avoid forbidden claims in the description and key words like:
+    - forbidden_claims : {forbidden_claims}
 
 Structure the description into sections and bullet points.
 
