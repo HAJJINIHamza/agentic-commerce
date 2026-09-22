@@ -220,6 +220,7 @@ __marimo__/
 #Data
 data/listings/
 data/scrapping/data_tables/
+data/scrapping/
 
 #notebooks
 notebooks/test_notebooks
