@@ -175,9 +175,10 @@ class marketingAgent:
         for date in pd.date_range(start_date, end_date, freq="D"):
             date = date.strftime("%d_%m_%Y")
             file_path = f"data/marketing/shopee_ads/day_by_data_data/Shopee-Ads-Overall-Data-{date}-{date}.csv"
-            day_data = self.read_shopee_ads_data(file_path)
-            day_data = day_data[day_data.index == 0]
-            overall_data.append(day_data)
+            if Path(file_path).exists():
+                day_data = self.read_shopee_ads_data(file_path)
+                day_data = day_data[day_data.index == 0]
+                overall_data.append(day_data)
 
         overall_data = pd.concat(overall_data)
 
