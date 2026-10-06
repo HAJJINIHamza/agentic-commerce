@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 import yaml
 
 from data_pipeline.collectors.shopee_listings_scrapper import get_product_titles_from_page, get_product_description_from_all_pages
+from agents.listing_generation.guardrails import is_title_contains_kbeauty_keyword, is_title_length_acceptable
+from agents.listing_generation.guardrails import is_description_length_acceptable, is_safe_from_forbidden_claims
 from src.logger import get_logger
 
 logger = get_logger(__name__)
@@ -286,6 +288,7 @@ class listingGenerationAgent:
                                                                     product_category,
                                                                     product_details,
                                                                     list_of_titles)
+        
         logger.info("Got and build title generation prompt")
 
         title, _ = self.get_completion_from_model(title_generation_prompt)
@@ -296,6 +299,21 @@ class listingGenerationAgent:
         except:
             logger.info("Failed to get a valid json title response from model")
             raise ValueError("Couldn't get a valid json title response from model")
+
+        #Guadrails
+        if not is_title_length_acceptable(title["title"]):
+            logger.info(f"Title is very long, invalid for Shopee listings. Title : {title}")
+            raise ValueError(f"Title is very long, invalid for Shopee listings. Title : {title}")
+
+        is_safe = is_safe_from_forbidden_claims(title["title"])
+        if not is_safe["is_safe"]:
+            logger.info(f"Title contains forbidden claims : {is_safe["forbidden_claim"]}") 
+            raise ValueError(f"Title contains forbidden claims : {is_safe["forbidden_claim"]}")
+        
+        if not is_title_contains_kbeauty_keyword(title["title"]):
+            title = f"[K-beauty] {title}"
+
+        logger.info("All guardrails passed successfully.")
 
         logger.info("Successfully generated title")
         logger.info(f"title : {title}")
@@ -346,6 +364,18 @@ class listingGenerationAgent:
             logger.info("Failed to get a valid json product_description response from model")
             logger.info(f"Got product_description : {product_description}")
             raise ValueError("Couldn't get a valid json product_description response from model")
+        
+        #Guadrails
+        if not is_description_length_acceptable(product_description["description"]):
+            logger.info(f"Description is very long, invalid for Shopee listings. Description : {product_description}")
+            raise ValueError(f"Description is very long, invalid for Shopee listings. Description : {product_description["description"]}")
+
+        is_safe = is_safe_from_forbidden_claims(product_description["description"])
+        if not is_safe["is_safe"]:
+            logger.info(f"Description contains forbidden claims : {is_safe["forbidden_claim"]}") 
+            raise ValueError(f"Description contains forbidden claims : {is_safe["forbidden_claim"]}")     
+
+        logger.info("All guardrails passed successfully.")
 
         logger.info("Successfully generated product description")
         logger.info(f"product_description : {product_description}")
