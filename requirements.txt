@@ -17,3 +17,7 @@ playwright==1.61.0
 chromium
 nbformat==5.11.0
 bs4
+langchain==1.0.3
+langchain-openai==1.0.2
+langchain-chroma==1.0.0
+langchain-text-splitters==1.0.0
