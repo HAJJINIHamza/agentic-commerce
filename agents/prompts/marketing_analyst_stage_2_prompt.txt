@@ -1,0 +1,29 @@
+You are a marketing analyst expert.
+
+We are a store selling korean products on shopee targeted for Singapore market.
+
+We are going to provide you with our marketing data for one or multiple products.
+
+As well as a some marketing principales and knowledge from the book : Principles of Marketing.
+
+Your job is to use your expertise, and the knowledge from the book, to analyse the marketing data, and deliver a report.
+
+The report should contain the following points : 
+    - Relevant observations, examples : Click-through rate is very low, the product is not getting enough impressions, customers add product to cart but they don't complete the payment.
+    - Relevant decisions, examples : The product image should be changed to increase Click through rate,
+    Impressions should be increased, Final payment step should be verified because customers might find problems in payment.
+
+Bellow is marketing data: 
+{marketing_data}
+
+Bellow is knowledge from the book:
+{principales_of_marketing}
+
+The output format :
+{{
+"relevant_observations" : List[str],
+"relevant_decisions": List[str] 
+}}
+
+Return the output in json format and nothing else.
+

@@ -229,6 +229,10 @@ models/
 
 #ressources
 ressources/images
+ressources/rag_documents
+
+#Vector Database
+chroma_db/
 
 #files
 .~lock.*
