@@ -1,6 +1,7 @@
 
 import os
 import hashlib
+from pyexpat.errors import messages
 
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter, TokenTextSplitter
@@ -28,10 +29,10 @@ class marketingAnalyticsAgent:
     def __init__(self):
         pass
 
-##############################################################################################
-# STAGE 1: Give marketing data to LLM, 
-# Let it analyze it and provide a report and queries 
-##############################################################################################
+    ##############################################################################################
+    # STAGE 1: Give marketing data to LLM, 
+    # Let it analyze it and provide a report and queries 
+    ##############################################################################################
 
     def get_observations_and_queries(self, marketing_data_path):
         """
@@ -78,12 +79,62 @@ class marketingAnalyticsAgent:
         logger.info(f"Relevant queries : {marketing_report['relevant_queries']}")
 
         return marketing_report
-
         
-##############################################################################################
-# STAGE 2: Give queries and knowledge base to LLM, 
-# let it search and provide actions to improve listings and marketing performance 
-##############################################################################################
+    ##############################################################################################
+    # STAGE 2: Give queries and knowledge base to LLM, 
+    # let it search and provide actions to improve listings and marketing performance 
+    ##############################################################################################
+
+    def retrieve_relevant_docs(self, query):
+        """
+        This function retrieves relevant documents from the knowledge base for a given query.
+        input :
+            query : str : the query to search for in the knowledge base
+        output :
+            retrieved_docs : List[Document] : the relevant documents retrieved from the knowledge base
+        """
+        vector_store = Chroma(
+            collection_name="principles_of_marketing_docs",
+            embedding_function=OpenRouterEmbeddings(),
+            persist_directory="./chroma_db",
+        )
+
+        retriever = vector_store.as_retriever (
+            search_type="similarity", #mmr : Balance similarity with diversity. "similarity_score_threshold": considers the embeddings only if they verify a certain similarity score threshold.
+            search_kwargs={"k": 3},
+        )
+
+        retrieved_docs = retriever.invoke(query)
+
+        return retrieved_docs
+
+    def answer_query_with_context(self, query, retrieved_docs):
+
+        with open("agents/prompts/marketing_analyst_stage_2_prompt.txt", "r") as f:
+            marketing_analytics_prompt = f.read()
+
+        context = "\n\n".join(
+            doc.page_content for doc in retrieved_docs
+        )
+
+        marketing_analytics_prompt = marketing_analytics_prompt.format(query=query,
+                                                                    relevant_observations=
+
+        )
+
+        # TODO : check this:
+        messages = marketing_analytics_prompt.invoke({
+            "context": context,
+            "question": query,
+        })
+
+        listingGenerationAgent().get_completion_from_model(messages)
+
+        #response = llm.invoke(messages)
+
+class knowledgeBaseBuilder:
+    def __init__(self):
+        pass
 
     def build_knowledge_base(self):
         """Create an empty, persisted Chroma collection for marketing documents."""
@@ -126,6 +177,7 @@ class marketingAnalyticsAgent:
             return
 
         embeddings = OpenRouterEmbeddings()
+        logger.info("Calling vectore database for chunks")
         vector_store = Chroma(
             collection_name="principles_of_marketing_docs",
             embedding_function=embeddings,
@@ -140,6 +192,7 @@ class marketingAnalyticsAgent:
         ]
         # Chroma passes all chunk texts to embed_documents(); _embed() handles
         # splitting that list into API-sized batches internally.
+        logger.info("Adding %s chunks to the knowledge base", len(chunks))
         vector_store.add_documents(documents=chunks, ids=ids)
 
         logger.info(
@@ -147,6 +200,27 @@ class marketingAnalyticsAgent:
             len(chunks),
             data_source_path,
         )
+
+    def get_vector_store_information(self):
+        """Get information about the persisted Chroma collection."""
+        vector_store = Chroma(
+            collection_name="principles_of_marketing_docs",
+            embedding_function=OpenRouterEmbeddings(),
+            persist_directory="./chroma_db",
+        )
+        count = vector_store._collection.count()
+        sample = vector_store.get(limit=1, include=["embeddings"])["embeddings"]
+        if count and len(sample):
+            vector = sample[0]
+            dimensions = len(vector)
+            raw_vectors_bytes = count * dimensions * vector.dtype.itemsize 
+            logger.info("Vectors: %s", count)
+            logger.info("Dimensions per vector: %s", dimensions)
+            logger.info("Approx. raw vector memory: %.2f MB", raw_vectors_bytes / 1024**2)
+            print ("Sample vector :")
+            print (vector_store.get(limit=1, include=["documents", "embeddings", "metadatas"]))
+        else:
+            logger.warning("The collection has no vectors.")
 
 """
 # 5. Configure retriever
@@ -181,5 +255,15 @@ def answer_question(question: str) -> str:
 # 8. Run
 if __name__ == "__main__":
     marketing_analytics_agent = marketingAnalyticsAgent()
-    marketing_analytics_agent.build_knowledge_base()
+    vector_store_builder = knowledgeBaseBuilder()
+    #marketing_analytics_agent.build_knowledge_base()
+
+    #data_source_path_1 = "ressources/rag_documents/principles_of_marketing_book_part_1.pdf"
+    #data_source_path_2 = "ressources/rag_documents/principles_of_marketing_book_part_2.pdf"
+    data_source_path_3 = "ressources/rag_documents/principles_of_marketing_book_part_3.pdf"
+    vector_store_builder.add_doc_to_knowledge_base(data_source_path_3)
+    
+    vector_store_builder.get_vector_store_information()
+
+
     
