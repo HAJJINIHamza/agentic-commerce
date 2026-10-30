@@ -38,10 +38,14 @@ class marketingAnalyticsAgent:
         """
         This LLM anayzes marketing data from marketing_data_path and generated a reports with oservations and queries.
         Queries are questions to look for in the Marketing Knowledge base
+
         input :
-            marketing_data_path : str : path to the marketing data file (csv)
+        marketing_data_path : str : path to the marketing data file (csv)
+                                example : 'data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv'
+        
         output :
-            marketing_report : dict : {"relevant_observations" : List[str],"relevant_queries": List[str] }
+        marketing_report : dict : {"relevant_observations" : List[str],"relevant_queries": List[str] }
+        
         """
 
         # Prompt
@@ -57,7 +61,7 @@ class marketingAnalyticsAgent:
         marketing_analytics_prompt = marketing_analytics_prompt.format(
             marketing_data=marketing_data_json,
         )
-        logger.info("Read and formatted prompt")
+        logger.info(f"Marketing analytics prompt stage 1 : {marketing_analytics_prompt}")
 
 
         # Invoke LLM, output should be : {{"relevant_observations" : List[str],"relevant_queries": List[str] }}
@@ -85,13 +89,32 @@ class marketingAnalyticsAgent:
     # let it search and provide actions to improve listings and marketing performance 
     ##############################################################################################
 
-    def retrieve_relevant_docs(self, query):
+    def retrieve_relevant_docs(self, queries: str | list[str], relevant_observations: list[str]):
         """
-        This function retrieves relevant documents from the knowledge base for a given query.
-        input :
-            query : str : the query to search for in the knowledge base
-        output :
+        Retrieve relevant documents using the queries combined with the marketing observations.
+        
+        Input :
+            queries : str | list[str] : one query or multiple queries to search for
+            relevant_observations : list[str] : marketing observations that will be added to each query
+        
+        Output :
             retrieved_docs : List[Document] : the relevant documents retrieved from the knowledge base
+                                                
+        Example output :[
+                            [Document(id='', 
+                                    metadata={'page': , 'source': ''}, 
+                                    page_content=''), 
+                            Document(id='', 
+                                        metadata={'page': , 'source': ''}, 
+                                        page_content='')
+                                        ], 
+                            [Document(id='', 
+                                        metadata={'page': , 'source': ''}, 
+                                        page_content=''), 
+                            Document(id='', 
+                                        metadata={'page': , 'source': ''}, 
+                                        page_content='')]
+                        ]
         """
         vector_store = Chroma(
             collection_name="principles_of_marketing_docs",
@@ -104,11 +127,46 @@ class marketingAnalyticsAgent:
             search_kwargs={"k": 3},
         )
 
-        retrieved_docs = retriever.invoke(query)
+        if isinstance(queries, str):
+            queries = [queries]
+        elif not isinstance(queries, list) or not all(
+            isinstance(query, str) for query in queries
+        ):
+            raise TypeError("queries must be a string or a list of strings")
+
+        # Join observations with queires
+        relevant_observations = " ".join(relevant_observations)
+        queries = [relevant_observations + ". " + query for query in queries] 
+
+        logger.info(f"Queries to give to retriever are : {queries}")
+
+        retrieved_docs = retriever.batch(queries)
+
+        total_docs = sum(len(docs) for docs in retrieved_docs)
+        logger.info(
+            "Retrieved %s documents across %s queries",
+            total_docs,
+            len(retrieved_docs),
+        )
 
         return retrieved_docs
 
-    def answer_query_with_context(self, query, retrieved_docs):
+    def answer_query_with_context(self, query : str,
+                                  relevant_observations : list[str], 
+                                  retrieved_docs : list[Document]):
+
+        """
+        Give model query, relevant observations and retrieved documents,
+        let it provide actions to improve marketing performance.
+
+        Input :
+        - query : str : the query to answer
+        - relevant_observations : List[str] : the relevant observations from the marketing data
+        - retrieved_docs : List[Document] : the relevant documents retrieved from the knowledge base
+
+        Output :
+        - solutions : { "relevant_decisions": List[str] }
+        """
 
         with open("agents/prompts/marketing_analyst_stage_2_prompt.txt", "r") as f:
             marketing_analytics_prompt = f.read()
@@ -118,19 +176,57 @@ class marketingAnalyticsAgent:
         )
 
         marketing_analytics_prompt = marketing_analytics_prompt.format(query=query,
-                                                                    relevant_observations=
-
+                                                                    relevant_observations=relevant_observations,
+                                                                    principales_of_marketing=context
         )
 
-        # TODO : check this:
-        messages = marketing_analytics_prompt.invoke({
-            "context": context,
-            "question": query,
-        })
+        logger.info(f"Marketing analytics prompt stage 2 : {marketing_analytics_prompt}")
 
-        listingGenerationAgent().get_completion_from_model(messages)
+        solutions, _ = listingGenerationAgent().get_completion_from_model(marketing_analytics_prompt)
 
-        #response = llm.invoke(messages)
+        logger.info("Got solutions from model.")
+
+        return solutions
+
+    def analyse_marketing_performance_pipeline(self, marketing_data_path: str):
+        """
+        Analyze marketing data, retrieve supporting documents, and return solutions.
+
+        Input : 
+        marketing_data_path : str : path to the marketing data file (csv)
+                                example : 'data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv'
+        
+        Solutions : list[{"relevant_decisions": List[str] }] : 
+        """
+        print ("#################################### STAGE 1 : report and queries ################################################")
+        marketing_report = self.get_observations_and_queries(marketing_data_path)
+        relevant_observations = marketing_report["relevant_observations"]
+        relevant_queries = marketing_report["relevant_queries"]
+
+        if not relevant_queries:
+            raise ValueError("The marketing report did not contain any relevant queries")
+
+        print ("#################################### Retrieval ################################################")
+        retrieved_docs_by_query = self.retrieve_relevant_docs(
+            relevant_queries,
+            relevant_observations,
+        )
+
+        print ("#################################### STAGE 2 : Solutions to improve marketing ################################################")
+        solutions = []
+        for i in (len(relevant_queries)):
+            solution = self.answer_query_with_context(
+                query=relevant_queries[i],
+                relevant_observations=relevant_observations,
+                retrieved_docs=retrieved_docs_by_query[i],
+            )
+            solutions.append(solution)
+
+        return solutions
+
+####################################################################################
+#Knowledge base builder
+####################################################################################
 
 class knowledgeBaseBuilder:
     def __init__(self):
@@ -255,15 +351,46 @@ def answer_question(question: str) -> str:
 # 8. Run
 if __name__ == "__main__":
     marketing_analytics_agent = marketingAnalyticsAgent()
-    vector_store_builder = knowledgeBaseBuilder()
+    #vector_store_builder = knowledgeBaseBuilder()
     #marketing_analytics_agent.build_knowledge_base()
 
     #data_source_path_1 = "ressources/rag_documents/principles_of_marketing_book_part_1.pdf"
     #data_source_path_2 = "ressources/rag_documents/principles_of_marketing_book_part_2.pdf"
-    data_source_path_3 = "ressources/rag_documents/principles_of_marketing_book_part_3.pdf"
-    vector_store_builder.add_doc_to_knowledge_base(data_source_path_3)
+    #data_source_path_3 = "ressources/rag_documents/principles_of_marketing_book_part_3.pdf"
+    #vector_store_builder.add_doc_to_knowledge_base(data_source_path_3)
     
-    vector_store_builder.get_vector_store_information()
+    #vector_store_builder.get_vector_store_information()
+    """
+    print ("########################### Get observations and queries ##################################")
+    data_path = "data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv"
+    relevant_observations, relevant_queries = marketing_analytics_agent.get_observations_and_queries(marketing_data_path = data_path)
+    print ("Relevant observations : ")
+    print (relevant_observations)
+    
+    print ("########################### Retrieving docs from knowledge base ##################################")
+    
+    #query = "What are the best practices for optimizing Shopee Ads campaigns?"
+    query_1 = "look for ways to increase the click-through rate of the product"
+    relevant_observations = ["The click-through rate (CTR) is 0.32%, which is below the industry average of 2.5%."]
 
+    retrieved_docs = marketing_analytics_agent.retrieve_relevant_docs(query_1, relevant_observations)
+    print ("Retrieved documents:")
+    print (retrieved_docs)
+    #for i in range(len(retrieved_docs)):
+    #    print (retrieved_docs[i].page_content)
+    #    print ("----------------------------------------")
+    
+    print ("########################### Marketing solutions from model ##################################")
+    retrieved_docs = retrieved_docs[0]
+    relevant_decisions = marketing_analytics_agent.answer_query_with_context(query=query_1,
+                                                                            relevant_observations = relevant_observations,
+                                                                            retrieved_docs = retrieved_docs)
+    print ("Relevant decisions :")
+    print (relevant_decisions)
+    """
+    data_path = "data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv"
+    relevant_decisions = marketing_analytics_agent.analyse_marketing_performance_pipeline(marketing_data_path = data_path)
+    print ("Relevant decisions :")
+    print (relevant_decisions)
 
     
