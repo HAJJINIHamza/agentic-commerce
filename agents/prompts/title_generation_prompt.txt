@@ -23,6 +23,8 @@ Avoid unsafe claims in the title like:
     - treats disease 
     - medical effect 
     - guaranteed result 
+Make sure the title contains the keyword K-beauty.
+Also find product brand in the provided information if possible, then add it to the title. 
 
 Generate the output in json format in english.
 Ouput the json text and nothing else.

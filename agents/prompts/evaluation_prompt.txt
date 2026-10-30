@@ -15,7 +15,8 @@ Input :
 - Product keywords : {keywords}
 - Product description : {description}
 
-The provide forbidden claims are examples, but they are not limited to the list provided. 
+The provided forbidden claims are examples, but they are not limited to the list provided. 
+Another important thing is description should not be one continuouse paragraph, but a mix of text and bullet points.
 You should return the following output in a json format, following the same structure as bellow:
 
 {{

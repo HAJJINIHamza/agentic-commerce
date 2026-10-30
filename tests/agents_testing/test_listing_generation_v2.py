@@ -69,6 +69,7 @@ def test_generate_product_description():
 
 
 if __name__ == "__main__":
-    #title = test_generate_product_title()
-    product_description = test_generate_product_description()
-    print(f"Generated product description: {product_description}")
+    title = test_generate_product_title()
+    #product_description = test_generate_product_description()
+    print(f"Generated title: {title}")
+    #print(f"Generated product description: {product_description}")
