@@ -14,7 +14,7 @@ logger = logger.get_logger(__name__)
 #Knowledge base builder
 ####################################################################################
 
-class knowledgeBaseBuilder:
+class embeddingsknowledgeBaseBuilder:
     def __init__(self):
         pass
 

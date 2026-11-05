@@ -2,6 +2,7 @@
 import os
 import hashlib
 from pyexpat.errors import messages
+import sqlite3
 
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter, TokenTextSplitter
@@ -15,6 +16,7 @@ from agents.embeddings.openrouter_embeddings import OpenRouterEmbeddings
 from agents.marketing_analytics.marketing_agent import marketingAgent
 from agents.listing_generation.listing_generator import listingGenerationAgent
 from src.logger import get_logger
+from src.utils import split_query_into_terms
 
 logger = get_logger(__name__)
 
@@ -44,7 +46,7 @@ class marketingAnalyticsAgent:
                                 example : 'data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv'
         
         output :
-        marketing_report : dict : {"relevant_observations" : List[str],"relevant_queries": List[str] }
+        marketing_report : dict : {"relevant_observations" : List[str],"relevant_query": str }
         
         """
 
@@ -64,7 +66,7 @@ class marketingAnalyticsAgent:
         logger.info(f"Marketing analytics prompt stage 1 : {marketing_analytics_prompt}")
 
 
-        # Invoke LLM, output should be : {{"relevant_observations" : List[str],"relevant_queries": List[str] }}
+        # Invoke LLM, output should be : {{"relevant_observations" : List[str],"relevant_query": str }}
         marketing_report = listingGenerationAgent().get_completion_from_model(
                             prompt=marketing_analytics_prompt)[0]
 
@@ -79,8 +81,7 @@ class marketingAnalyticsAgent:
 
         logger.info("Got marketing report from LLM")
         logger.info(f"Relevant observations : {marketing_report['relevant_observations']}")
-        logger.info(f"Number of queries : {len(marketing_report['relevant_queries'])}")
-        logger.info(f"Relevant queries : {marketing_report['relevant_queries']}")
+        logger.info(f"Relevant query : {marketing_report['relevant_query']}")
 
         return marketing_report
         
@@ -89,7 +90,7 @@ class marketingAnalyticsAgent:
     # let it search and provide actions to improve listings and marketing performance 
     ##############################################################################################
 
-    def retrieve_relevant_docs(self, queries: str | list[str], relevant_observations: list[str]):
+    def embeddings_based_retriever(self, queries: str | list[str], relevant_observations: list[str]):
         """
         Retrieve relevant documents using the queries combined with the marketing observations.
         
@@ -134,10 +135,6 @@ class marketingAnalyticsAgent:
         ):
             raise TypeError("queries must be a string or a list of strings")
 
-        # Join observations with queires
-        relevant_observations = " ".join(relevant_observations)
-        queries = [relevant_observations + ". " + query for query in queries] 
-
         logger.info(f"Queries to give to retriever are : {queries}")
 
         retrieved_docs = retriever.batch(queries)
@@ -150,6 +147,64 @@ class marketingAnalyticsAgent:
         )
 
         return retrieved_docs
+
+    def term_based_retrieve_one_query(self, query: str):
+        """
+        Retrieve relevant documents using the query and the term-based knowledge base.
+        
+        Input :
+            query : str : the query to search for
+        
+        Output :
+            docs : list[dict] : example : [{"metadata": "pdf_name, page 2 (score: 0.123)", "content": "text of the chunk"}, ...]
+        """
+
+        fts_query = split_query_into_terms(query)
+        logger.info("Retrieving documents for query: %s", fts_query)
+
+        with sqlite3.connect("term_knowledge_base.sqlite3") as conn:
+            rows = conn.execute(
+                """
+                SELECT pdf_name, page_number, content, bm25(pdf_chunks) AS score
+                FROM pdf_chunks
+                WHERE content MATCH ?
+                ORDER BY score
+                LIMIT 3
+                """,
+                (fts_query,),
+            ).fetchall()
+        docs = []
+        for pdf_name, page_number, content, score in rows:
+            doc = {
+                "metadata": f"{pdf_name}, page {page_number} (score: {score:.3f})",
+                "content" : content
+                }
+            docs.append(doc)
+        return docs
+
+    def term_based_retriever(self, queries: str | list[str]):
+        """
+        Retrieve relevant documents using the queries and the term-based knowledge base.
+        
+        Input :
+            queries : str | list[str] : one query or multiple queries to search for
+        
+        Output :
+            list_of_docs : list[list[dict]] : one list of matching documents per query
+        """
+        if isinstance(queries, str):
+            queries = [queries]
+        elif not isinstance(queries, list) or not all(
+            isinstance(query, str) for query in queries
+        ):
+            raise TypeError("queries must be a string or a list of strings")
+
+        list_of_docs = []
+        for query in queries:
+            docs = self.term_based_retrieve_one_query(query)
+            list_of_docs.append(docs)
+
+        return list_of_docs
 
     def answer_query_with_context(self, query : str,
                                   relevant_observations : list[str], 
@@ -171,7 +226,7 @@ class marketingAnalyticsAgent:
         with open("agents/prompts/marketing_analyst_stage_2_prompt.txt", "r") as f:
             marketing_analytics_prompt = f.read()
 
-        context = "\n\n".join(
+        context = "\nNew document :\n".join(
             doc.page_content for doc in retrieved_docs
         )
 
@@ -188,178 +243,57 @@ class marketingAnalyticsAgent:
 
         return solutions
 
-    def analyse_marketing_performance_pipeline(self, marketing_data_path: str):
+    def analyse_marketing_performance_pipeline(
+        self,
+        marketing_data_path: str,
+        retriever: str = "embedding",
+    ):
         """
         Analyze marketing data, retrieve supporting documents, and return solutions.
 
         Input : 
         marketing_data_path : str : path to the marketing data file (csv)
                                 example : 'data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv'
+        retriever : str : retrieval method, either "embedding" or "term"
         
         Solutions : list[{"relevant_decisions": List[str] }] : 
         """
+        if retriever not in {"embedding", "term"}:
+            raise ValueError('retriever must be either "embedding" or "term"')
+
         print ("#################################### STAGE 1 : report and queries ################################################")
         marketing_report = self.get_observations_and_queries(marketing_data_path)
         relevant_observations = marketing_report["relevant_observations"]
-        relevant_queries = marketing_report["relevant_queries"]
+        relevant_query = marketing_report["relevant_query"]
 
-        if not relevant_queries:
+        if not relevant_query:
             raise ValueError("The marketing report did not contain any relevant queries")
 
         print ("#################################### Retrieval ################################################")
-        retrieved_docs_by_query = self.retrieve_relevant_docs(
-            relevant_queries,
-            relevant_observations,
-        )
+        if retriever == "embedding":
+            retrieved_docs = self.embeddings_based_retriever(
+                relevant_query,
+                relevant_observations,
+            )
+        else:
+            retrieved_docs = self.term_based_retrieve_one_query(relevant_query) #list[dict]
 
         print ("#################################### STAGE 2 : Solutions to improve marketing ################################################")
-        solutions = []
-        for i in (len(relevant_queries)):
-            solution = self.answer_query_with_context(
-                query=relevant_queries[i],
-                relevant_observations=relevant_observations,
-                retrieved_docs=retrieved_docs_by_query[i],
-            )
-            solutions.append(solution)
 
-        return solutions
-
-####################################################################################
-#Knowledge base builder
-####################################################################################
-
-class knowledgeBaseBuilder:
-    def __init__(self):
-        pass
-
-    def build_knowledge_base(self):
-        """Create an empty, persisted Chroma collection for marketing documents."""
-        persist_directory = "./chroma_db"
-        collection_name = "principles_of_marketing_docs"
-
-        vector_store = Chroma(
-            collection_name=collection_name,
-            embedding_function=OpenRouterEmbeddings(),
-            persist_directory=persist_directory,
-        )
-        vector_store.reset_collection()
-
-        logger.info(
-            "Created empty vector store collection '%s' at %s",
-            collection_name,
-            persist_directory,
+        solution = self.answer_query_with_context( # { "relevant_decisions": List[str] }
+            query=relevant_query,
+            relevant_observations=relevant_observations, 
+            retrieved_docs=retrieved_docs,
         )
 
-    def add_doc_to_knowledge_base(self, data_source_path: str):
-        """Split a PDF into chunks and add them to the persisted Chroma collection."""
-        reader = PdfReader(data_source_path)
-        documents = [
-            Document(
-                page_content=page.extract_text() or "",
-                metadata={"source": data_source_path, "page": page_number},
-            )
-            for page_number, page in enumerate(reader.pages, start=1)
-        ]
-        logger.info("Loaded %s pages from %s", len(documents), data_source_path)
+        return solution
 
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=50,
-        )
-        chunks = splitter.split_documents(documents)
-        logger.info("Split PDF into %s chunks", len(chunks))
-        if not chunks:
-            logger.warning("No text chunks found in %s; nothing was added", data_source_path)
-            return
 
-        embeddings = OpenRouterEmbeddings()
-        logger.info("Calling vectore database for chunks")
-        vector_store = Chroma(
-            collection_name="principles_of_marketing_docs",
-            embedding_function=embeddings,
-            persist_directory="./chroma_db",
-        )
-
-        ids = [
-            hashlib.sha256(
-                f"{data_source_path}\0{chunk.metadata['page']}\0{index}\0{chunk.page_content}".encode("utf-8")
-            ).hexdigest()
-            for index, chunk in enumerate(chunks)
-        ]
-        # Chroma passes all chunk texts to embed_documents(); _embed() handles
-        # splitting that list into API-sized batches internally.
-        logger.info("Adding %s chunks to the knowledge base", len(chunks))
-        vector_store.add_documents(documents=chunks, ids=ids)
-
-        logger.info(
-            "Added %s chunks from %s to the knowledge base",
-            len(chunks),
-            data_source_path,
-        )
-
-    def get_vector_store_information(self):
-        """Get information about the persisted Chroma collection."""
-        vector_store = Chroma(
-            collection_name="principles_of_marketing_docs",
-            embedding_function=OpenRouterEmbeddings(),
-            persist_directory="./chroma_db",
-        )
-        count = vector_store._collection.count()
-        sample = vector_store.get(limit=1, include=["embeddings"])["embeddings"]
-        if count and len(sample):
-            vector = sample[0]
-            dimensions = len(vector)
-            raw_vectors_bytes = count * dimensions * vector.dtype.itemsize 
-            logger.info("Vectors: %s", count)
-            logger.info("Dimensions per vector: %s", dimensions)
-            logger.info("Approx. raw vector memory: %.2f MB", raw_vectors_bytes / 1024**2)
-            print ("Sample vector :")
-            print (vector_store.get(limit=1, include=["documents", "embeddings", "metadatas"]))
-        else:
-            logger.warning("The collection has no vectors.")
-
-"""
-# 5. Configure retriever
-#retriever = vector_store.as_retriever(
-#    search_type="similarity", #mmr : Balance similarity with diversity. "similarity_score_threshold": considers the embeddings only if they verify a certain similarity score threshold.
-#    search_kwargs={"k": 3},
-#)
-
-# 6. Configure LLM and prompt
-with open("agents/prompts/marketing_analyst_prompt.txt", "r") as f:
-    marketing_analytics_prompt = f.read()
-
-marketing_analytics_prompt = ChatPromptTemplate.from_template(marketing_analytics_prompt)
-
-# 7. RAG pipeline
-def answer_question(question: str) -> str:
-    retrieved_docs = retriever.invoke(question)
-
-    context = "\n\n".join(
-        doc.page_content for doc in retrieved_docs
-    )
-
-    messages = marketing_analytics_prompt.invoke({
-        "context": context,
-        "question": question,
-    })
-
-    response = llm.invoke(messages)
-    return response.content
-"""
 
 # 8. Run
 if __name__ == "__main__":
     marketing_analytics_agent = marketingAnalyticsAgent()
-    #vector_store_builder = knowledgeBaseBuilder()
-    #marketing_analytics_agent.build_knowledge_base()
 
-    #data_source_path_1 = "ressources/rag_documents/principles_of_marketing_book_part_1.pdf"
-    #data_source_path_2 = "ressources/rag_documents/principles_of_marketing_book_part_2.pdf"
-    #data_source_path_3 = "ressources/rag_documents/principles_of_marketing_book_part_3.pdf"
-    #vector_store_builder.add_doc_to_knowledge_base(data_source_path_3)
-    
-    #vector_store_builder.get_vector_store_information()
     """
     print ("########################### Get observations and queries ##################################")
     data_path = "data/marketing/shopee_ads/overall_data/Shopee-Ads-Overall-Data-01_09_2026-21_09_2026.csv"
@@ -393,4 +327,10 @@ if __name__ == "__main__":
     print ("Relevant decisions :")
     print (relevant_decisions)
 
+    #Test term-based retriever
+    #queries = ["How to imporve click through rate", "Why is conversion rate so low"]
+    #query = "Click Through Rate"
+    #retrieved_docs = marketing_analytics_agent.term_based_retriever(queries)
+    #print ("Retrieved documents:")
+    #print (retrieved_docs)
     

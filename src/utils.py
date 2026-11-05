@@ -58,6 +58,21 @@ def split_pdf_by_pages(pdf_path: str, num_of_pages: int) -> None:
             output_path,
         )
 
+def split_query_into_terms(query: str) -> str:
+    """Build an FTS5 OR query from consecutive 1-, 2-, and 3-word terms."""
+    words = query.split()
+    terms = []
+
+    for window_size in (1, 2, 3):
+        terms.extend(
+            " ".join(words[i : i + window_size])
+            for i in range(len(words) - window_size + 1)
+        )
+    escaped_terms = [term.replace('"', '""') for term in terms]
+    fts_query = " OR ".join(f'"{term}"' for term in escaped_terms)
+
+    return fts_query
+
 if __name__ == "__main__":
     # Example usage
     pdf_path = "ressources/rag_documents/principles_of_marketing_book.pdf"
