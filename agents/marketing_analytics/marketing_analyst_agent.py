@@ -99,7 +99,7 @@ class marketingAnalyticsAgent:
             relevant_observations : list[str] : marketing observations that will be added to each query
         
         Output :
-            retrieved_docs : List[Document] : the relevant documents retrieved from the knowledge base
+            retrieved_docs : List[list[Document]] : the relevant documents retrieved from the knowledge base
                                                 
         Example output :[
                             [Document(id='', 
@@ -156,7 +156,7 @@ class marketingAnalyticsAgent:
             query : str : the query to search for
         
         Output :
-            docs : list[dict] : example : [{"metadata": "pdf_name, page 2 (score: 0.123)", "content": "text of the chunk"}, ...]
+            docs : list[Document] : matching chunks with PDF name, page, and score in metadata
         """
 
         fts_query = split_query_into_terms(query)
@@ -175,11 +175,16 @@ class marketingAnalyticsAgent:
             ).fetchall()
         docs = []
         for pdf_name, page_number, content, score in rows:
-            doc = {
-                "metadata": f"{pdf_name}, page {page_number} (score: {score:.3f})",
-                "content" : content
-                }
-            docs.append(doc)
+            docs.append(
+                Document(
+                    page_content=content,
+                    metadata={
+                        "pdf_name": pdf_name,
+                        "page": int(page_number),
+                        "score": float(score),
+                    },
+                )
+            )
         return docs
 
     def term_based_retriever(self, queries: str | list[str]):
@@ -276,8 +281,8 @@ class marketingAnalyticsAgent:
                 relevant_observations,
             )
         else:
-            retrieved_docs = self.term_based_retrieve_one_query(relevant_query) #list[dict]
-
+            retrieved_docs = self.term_based_retrieve_one_query(relevant_query)
+        print( "Retrieved dodcs : ", retrieved_docs)
         print ("#################################### STAGE 2 : Solutions to improve marketing ################################################")
 
         solution = self.answer_query_with_context( # { "relevant_decisions": List[str] }
