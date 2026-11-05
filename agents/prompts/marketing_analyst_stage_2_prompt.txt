@@ -9,8 +9,7 @@ As well as a some marketing principales and knowledge from the book : Principles
 Your job is to use your expertise, and the knowledge from the book, to propose a solution for the following query : {query}.
 
 The solution should contain the following point : 
-    - Relevant decisions, examples : The product image should be changed to increase Click through rate,
-    Invest more in Shopee Ads in order to increase impressions, Final payment step should be verified because customers might be finding problems in payment.
+    - Relevant decisions to imporve our marketing. 
 
 Bellow is marketing performance report: 
 {relevant_observations}
