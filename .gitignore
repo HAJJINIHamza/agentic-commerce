@@ -234,6 +234,8 @@ ressources/rag_documents
 
 #Vector Database
 chroma_db/
+#Term Database
+term_knowledge_base.sqlite3
 
 #files
 .~lock.*
