@@ -22,7 +22,7 @@ def test_analyse_marketing_performance_pipeline():
     marketing_analytics_agent = marketingAnalyticsAgent()
     retriever = "term"
 
-    solution = marketing_analytics_agent.analyse_marketing_performance_pipeline(
+    solution, _, _ = marketing_analytics_agent.analyse_marketing_performance_pipeline(
         marketing_data_path=DATA_PATH,
         retriever=retriever,
     )
