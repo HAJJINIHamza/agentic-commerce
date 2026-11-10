@@ -19,6 +19,14 @@ We propose agentic commerce, an approach that relies on data, business rules, an
   <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white" alt="Git">
 </p>
 
+|tool | version |
+| --- | --- |
+| python | 3.12.3 |
+| pandas | 3.0.3 |
+| streamlit | 1.58.0 |
+| torch | 2.11.0 |
+| langchain | 1.0.3 |
+
 ### Project components
 1. Product discovery and selection
 
@@ -47,6 +55,8 @@ We propose agentic commerce, an approach that relies on data, business rules, an
 4. Product pricing 
     
     The objective is to estimate competitive prices for our products on Shopee. The process starts by extracting our competitors' prices and determining a competitive price range. It then uses a mathematical formula that includes the necessary costs, rates, fees, commissions, and profits to estimate the final price.
+
+    ![Product pricing](documentation/diagrams/product_pricing.drawio.png)
 
 4. Marketing dashboard
 
