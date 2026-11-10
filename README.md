@@ -103,8 +103,16 @@ agentic-commerce/
 ### Project screens
 
 #### Product selection agent - Product scoring dashboard
+![Recommended product](documentation/project_screenshots/recommended_product.png)
+
+### Supplier selection agent - Supplier scoring dashboard
+![Recommended supplier](documentation/project_screenshots/recommended_supplier.png)
 
 #### Dynamic pricing agent - Pricing dashboard
+
+![pricing 1](documentation/project_screenshots/pricing_1.png)
+![pricing 2](documentation/project_screenshots/pricing_2.png)
+![pricing 3](documentation/project_screenshots/pricing_3.png)
 
 #### Marketing Agent - Marketing dashboard
 
